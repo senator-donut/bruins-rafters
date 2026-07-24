@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rafters 2026–27 · Home Schedule &amp; Game Plans</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0C0C0C;
+    --panel:#161616;
+    --panel-2:#1E1E1E;
+    --line:#2E2C28;
+    --gold:#FFB81C;
+    --gold-dim:#8A6B15;
+    --paper:#EFEBE1;
+    --muted:#89837A;
+    --rust:#C4553B;
+    --grid:12px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;
+    font-size:15px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 18px 80px;}
+
+  /* ---------- masthead ---------- */
+  .masthead{border-bottom:2px solid var(--gold);padding-bottom:18px;margin-bottom:26px;}
+  .eyebrow{
+    font-family:'Barlow Condensed',sans-serif;
+    text-transform:uppercase;letter-spacing:.22em;font-size:13px;font-weight:600;
+    color:var(--gold);margin:0 0 6px;
+  }
+  h1{
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:700;text-transform:uppercase;letter-spacing:.01em;
+    font-size:clamp(38px,8.5vw,74px);line-height:.92;margin:0;
+  }
+  h1 span{color:var(--gold);}
+  .standfirst{color:var(--muted);max-width:62ch;margin:12px 0 0;font-size:14.5px;}
+
+  /* ---------- section headers ---------- */
+  .sec{margin-top:44px;}
+  .sec-hd{
+    display:flex;align-items:baseline;gap:12px;
+    border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:18px;
+  }
+  .sec-hd h2{
+    font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;
+    letter-spacing:.12em;font-size:19px;font-weight:600;margin:0;
+  }
+  .sec-hd .note{color:var(--muted);font-size:12.5px;margin-left:auto;text-align:right;}
+
+  /* ---------- plan cards ---------- */
+  .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:10px;}
+  .plan{
+    background:var(--panel);border:1px solid var(--line);border-radius:3px;
+    padding:14px 14px 12px;text-align:left;cursor:pointer;color:inherit;
+    transition:border-color .15s,background .15s,transform .15s;
+    display:flex;flex-direction:column;gap:2px;font:inherit;
+  }
+  .plan:hover{border-color:var(--gold-dim);}
+  .plan:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+  .plan[aria-pressed="true"]{background:var(--panel-2);border-color:var(--gold);}
+  .plan[aria-pressed="true"] .plan-name{color:var(--gold);}
+  .plan-kicker{
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--muted);
+  }
+  .plan-name{
+    font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;
+    font-size:23px;font-weight:600;line-height:1.05;letter-spacing:.02em;margin:3px 0 8px;
+  }
+  .plan-price{font-family:'IBM Plex Mono',monospace;font-size:21px;font-weight:500;}
+  .plan-sub{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--muted);}
+  .plan-delta{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;margin-top:9px;
+    padding-top:8px;border-top:1px dashed var(--line);
+  }
+  .pos{color:var(--gold);} .neg{color:var(--rust);}
+
+  /* ---------- the ribbon: signature element ---------- */
+  .months{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px 26px;}
+  .month-label{
+    font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;
+    letter-spacing:.2em;font-size:12px;color:var(--muted);
+    border-bottom:1px solid var(--line);padding-bottom:5px;margin-bottom:9px;
+  }
+  .month-label b{color:var(--gold);font-weight:600;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;}
+  .games{display:flex;flex-direction:column;gap:4px;}
+  .game{
+    display:grid;grid-template-columns:52px 1fr auto;align-items:center;gap:9px;
+    padding:7px 9px;border-radius:2px;
+    background:var(--panel);
+    border-left:3px solid #333;
+    transition:background .18s,border-color .18s,opacity .18s;
+  }
+  .game.on{background:var(--panel-2);border-left-color:var(--gold);}
+  .game.off{opacity:.3;}
+  .g-date{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);
+    letter-spacing:-.01em;white-space:nowrap;
+  }
+  .game.on .g-date{color:var(--paper);}
+  .g-opp{
+    font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;
+    font-size:19px;font-weight:600;letter-spacing:.04em;line-height:1;
+  }
+  .game.on .g-opp{color:var(--gold);}
+  .g-time{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);margin-left:6px;letter-spacing:-.02em;}
+  .g-price{font-family:'IBM Plex Mono',monospace;font-size:12.5px;text-align:right;white-space:nowrap;}
+  .g-price small{display:block;font-size:10px;color:var(--muted);}
+  .tag{
+    font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.1em;
+    border:1px solid var(--gold-dim);color:var(--gold);border-radius:2px;
+    padding:0 3px;margin-left:6px;vertical-align:2px;
+  }
+  .tag.pre{border-color:var(--line);color:var(--muted);}
+
+  /* ---------- value table ---------- */
+  .tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  table{border-collapse:collapse;width:100%;min-width:560px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;}
+  th,td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap;}
+  th:first-child,td:first-child{text-align:left;}
+  thead th{
+    font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--muted);font-weight:500;border-bottom-color:var(--gold-dim);
+  }
+  tbody tr:hover{background:var(--panel);}
+  td.name{font-family:'Barlow Condensed',sans-serif;font-size:17px;letter-spacing:.03em;text-transform:uppercase;}
+
+  .footnotes{margin-top:34px;border-top:1px solid var(--line);padding-top:16px;color:var(--muted);font-size:12.5px;}
+  .footnotes p{margin:0 0 8px;max-width:76ch;}
+  .footnotes b{color:var(--paper);font-weight:600;}
+
+  @media (max-width:520px){
+    .game{grid-template-columns:46px 1fr auto;padding:6px 7px;gap:7px;}
+    .g-opp{font-size:17px;}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Rapid7 Rafters · TD Garden</p>
+    <h1>2026–27 Home<br>Schedule &amp; <span>Game Plans</span></h1>
+    <p class="standfirst">Every Bruins home date with its Rafters window price. Pick a plan to light up the games it includes — the value math updates against face value for Row A and Rows B.</p>
+  </header>
+
+  <section class="sec">
+    <div class="sec-hd">
+      <h2>Choose a plan</h2>
+      <span class="note">Tap to highlight · tap again to clear</span>
+    </div>
+    <div class="plans" id="plans"></div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-hd">
+      <h2>The season</h2>
+      <span class="note" id="ribbonNote">44 home dates</span>
+    </div>
+    <div class="months" id="months"></div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-hd">
+      <h2>What each plan is worth</h2>
+      <span class="note">Face value = sum of listed single-game prices</span>
+    </div>
+    <div class="tbl-scroll">
+      <table id="valueTable">
+        <thead>
+          <tr>
+            <th>Plan</th><th>Games</th><th>Plan cost</th><th>Per game</th>
+            <th>Row A face</th><th>vs Row A</th><th>Rows B face</th><th>vs Rows B</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="footnotes">
+    <p><b>Row A vs Rows B.</b> The pricing sheet lists two tiers per game — Row A (front of the balcony) runs $10 more than every other row. Plan pricing is a single number, so which tier you actually get changes the discount a lot.</p>
+    <p><b>Bergeron Night.</b> Patrice Bergeron's No. 37 goes up before the Dec 1 game vs Colorado — the most expensive date on the sheet at $326.50. It appears in the 22-Game Bergeron package only. The sale email says the 22-Game Plan guarantees access to the ceremony, but the 22-Game Black Friday game list doesn't include Dec 1. Worth pinning down with the rep before you buy.</p>
+    <p><b>Preseason.</b> Sep 20 vs Washington and Sep 22 vs Philadelphia are preseason and are priced at $61.50 — each 22-game plan spends one of its 22 slots on one.</p>
+  </div>
+
+</div>
+
+<script>
+const PLANS = {
+  BERG22: {name:"22-Game Bergeron", code:"P27RAFA22", cost:2662},
+  BF22:   {name:"22-Game Black Friday", code:"P27RAFB22", cost:2662},
+  RIV10:  {name:"10-Game Rivalry", code:"P27RAFA", cost:1310},
+  BF10:   {name:"10-Game Black Friday", code:"P27RAFB", cost:1310}
+};
+
+// date, weekday, opponent, start, Row A price, plans, preseason?
+const G = [
+ ["Sep 20","Sun","WSH","5:00",61.50,["BERG22"],1],
+ ["Sep 22","Tue","PHI","7:00",61.50,["BF22"],1],
+ ["Sep 29","Tue","NYR","8:00",151.50,["BERG22","RIV10"],0],
+ ["Oct 5","Mon","OTT","7:30",76.50,["BERG22","BF10"],0],
+ ["Oct 8","Thu","UTA","7:00",96.50,["BF22"],0],
+ ["Oct 10","Sat","PHI","1:00",136.50,["BERG22"],0],
+ ["Oct 22","Thu","NSH","7:00",76.50,["BERG22","RIV10"],0],
+ ["Oct 24","Sat","SJS","7:00",126.50,["BF22","BF10"],0],
+ ["Oct 31","Sat","CHI","1:00",136.50,["BF22"],0],
+ ["Nov 2","Mon","VGK","7:00",111.50,["BERG22"],0],
+ ["Nov 8","Sun","FLA","1:00",136.50,["BERG22"],0],
+ ["Nov 12","Thu","MTL","7:00",171.50,["BF22","RIV10"],0],
+ ["Nov 14","Sat","MIN","7:00",126.50,["BF22","BF10"],0],
+ ["Nov 17","Tue","LAK","7:00",96.50,["BERG22"],0],
+ ["Nov 21","Sat","WSH","7:00",151.50,["BF22","RIV10"],0],
+ ["Nov 25","Wed","WPG","7:00",126.50,["BERG22"],0],
+ ["Nov 27","Fri","TOR","1:00",226.50,["BF22","BF10"],0],
+ ["Nov 29","Sun","VAN","5:00",76.50,["BF22"],0],
+ ["Dec 1","Tue","COL","7:30",326.50,["BERG22"],0],
+ ["Dec 5","Sat","DET","1:00",136.50,["BERG22"],0],
+ ["Dec 12","Sat","NJD","1:00",151.50,["BF22","BF10"],0],
+ ["Dec 15","Tue","FLA","7:00",136.50,["BF22"],0],
+ ["Dec 17","Thu","STL","7:00",111.50,["BERG22","RIV10"],0],
+ ["Dec 20","Sun","PHI","1:00",136.50,["BF22"],0],
+ ["Dec 26","Sat","NYI","7:00",171.50,["BERG22"],0],
+ ["Dec 30","Wed","EDM","7:30",171.50,["BF22","BF10"],0],
+ ["Jan 5","Tue","BUF","7:30",111.50,["BF22","RIV10"],0],
+ ["Jan 12","Tue","CAR","7:00",136.50,["BERG22"],0],
+ ["Jan 14","Thu","DAL","7:00",111.50,["BF22","RIV10"],0],
+ ["Jan 18","Mon","TBL","1:30",126.50,["BERG22"],0],
+ ["Jan 26","Tue","CBJ","7:00",96.50,["BF22","BF10"],0],
+ ["Jan 30","Sat","TOR","7:00",226.50,["BERG22","RIV10"],0],
+ ["Feb 13","Sat","CBJ","7:00",126.50,["BERG22"],0],
+ ["Feb 15","Mon","ANA","12:30",126.50,["BF22"],0],
+ ["Feb 25","Thu","WSH","8:00",136.50,["BERG22","BF10"],0],
+ ["Feb 27","Sat","DET","12:00",136.50,["BF22"],0],
+ ["Mar 6","Sat","PIT","12:00",171.50,["BF22","RIV10"],0],
+ ["Mar 8","Mon","SEA","7:00",96.50,["BERG22","BF10"],0],
+ ["Mar 13","Sat","CGY","7:00",136.50,["BERG22"],0],
+ ["Mar 15","Mon","NYI","7:00",111.50,["BF22"],0],
+ ["Mar 23","Tue","BUF","7:00",111.50,["BERG22","BF10"],0],
+ ["Mar 25","Thu","OTT","7:00",111.50,["BF22"],0],
+ ["Mar 30","Tue","MTL","7:00",171.50,["BERG22"],0],
+ ["Apr 3","Sat","TBL","3:00",171.50,["BF22","RIV10"],0]
+].map(r=>({date:r[0],day:r[1],opp:r[2],time:r[3],a:r[4],b:r[4]-10,plans:r[5],pre:r[6]}));
+
+const MONTH_ORDER=["Sep","Oct","Nov","Dec","Jan","Feb","Mar","Apr"];
+const MONTH_FULL={Sep:"September",Oct:"October",Nov:"November",Dec:"December",
+                  Jan:"January",Feb:"February",Mar:"March",Apr:"April"};
+const money=n=>"$"+n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const money0=n=>"$"+Math.round(n).toLocaleString("en-US");
+
+let active=null;
+
+function faces(key){
+  const list=G.filter(g=>g.plans.includes(key));
+  return {n:list.length,
+          a:list.reduce((s,g)=>s+g.a,0),
+          b:list.reduce((s,g)=>s+g.b,0)};
+}
+
+/* plan cards */
+const plansEl=document.getElementById("plans");
+Object.entries(PLANS).forEach(([key,p])=>{
+  const f=faces(key), saveA=f.a-p.cost;
+  const btn=document.createElement("button");
+  btn.className="plan"; btn.type="button";
+  btn.setAttribute("aria-pressed","false");
+  btn.dataset.key=key;
+  btn.innerHTML=
+    `<span class="plan-kicker">${f.n} games · ${p.code}</span>`+
+    `<span class="plan-name">${p.name.replace(/^\d+-Game /,"")}</span>`+
+    `<span class="plan-price">${money0(p.cost)}</span>`+
+    `<span class="plan-sub">${money(p.cost/f.n)} per game</span>`+
+    `<span class="plan-delta ${saveA>0?"pos":"neg"}">`+
+      `${saveA>0?"Saves":"Costs"} ${money(Math.abs(saveA))} vs Row A face</span>`;
+  btn.addEventListener("click",()=>select(key===active?null:key));
+  plansEl.appendChild(btn);
+});
+
+/* schedule ribbon */
+const monthsEl=document.getElementById("months");
+MONTH_ORDER.forEach(m=>{
+  const list=G.filter(g=>g.date.startsWith(m));
+  if(!list.length) return;
+  const col=document.createElement("div");
+  col.innerHTML=`<div class="month-label">${MONTH_FULL[m]} <b>${list.length}</b></div>`;
+  const box=document.createElement("div"); box.className="games";
+  list.forEach(g=>{
+    const el=document.createElement("div");
+    el.className="game"; el.dataset.plans=g.plans.join(",");
+    el.innerHTML=
+      `<span class="g-date">${g.day} ${g.date.split(" ")[1]}</span>`+
+      `<span><span class="g-opp">${g.opp}</span>`+
+        (g.pre?`<span class="tag pre">PRE</span>`:``)+
+        (g.opp==="COL"?`<span class="tag">37</span>`:``)+
+        `<span class="g-time">${g.time}</span></span>`+
+      `<span class="g-price">${money(g.a)}<small>${money(g.b)}</small></span>`;
+    box.appendChild(el);
+  });
+  col.appendChild(box); monthsEl.appendChild(col);
+});
+
+/* value table */
+const tb=document.querySelector("#valueTable tbody");
+Object.entries(PLANS).forEach(([key,p])=>{
+  const f=faces(key), dA=f.a-p.cost, dB=f.b-p.cost;
+  const pct=(d,face)=>(d/face*100).toFixed(1)+"%";
+  const tr=document.createElement("tr");
+  tr.innerHTML=
+    `<td class="name">${p.name}</td>`+
+    `<td>${f.n}</td><td>${money0(p.cost)}</td><td>${money(p.cost/f.n)}</td>`+
+    `<td>${money(f.a)}</td><td class="${dA>0?"pos":"neg"}">${dA>0?"−":"+"}${money(Math.abs(dA))} · ${pct(Math.abs(dA),f.a)}</td>`+
+    `<td>${money(f.b)}</td><td class="${dB>0?"pos":"neg"}">${dB>0?"−":"+"}${money(Math.abs(dB))} · ${pct(Math.abs(dB),f.b)}</td>`;
+  tb.appendChild(tr);
+});
+
+/* selection */
+const note=document.getElementById("ribbonNote");
+function select(key){
+  active=key;
+  document.querySelectorAll(".plan").forEach(b=>
+    b.setAttribute("aria-pressed", String(b.dataset.key===key)));
+  document.querySelectorAll(".game").forEach(el=>{
+    const inPlan = key && el.dataset.plans.split(",").includes(key);
+    el.classList.toggle("on", !!inPlan);
+    el.classList.toggle("off", !!key && !inPlan);
+  });
+  if(key){
+    const f=faces(key);
+    note.textContent = `${PLANS[key].name} · ${f.n} of 44 dates`;
+  } else {
+    note.textContent = "44 home dates";
+  }
+}
+</script>
+</body>
+</html>
