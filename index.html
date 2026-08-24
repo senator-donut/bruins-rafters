@@ -15,6 +15,8 @@
     --line:#2E2C28;
     --gold:#FFB81C;
     --gold-dim:#8A6B15;
+    --green:#3CC47C;
+    --green-dim:#1E6B41;
     --paper:#EFEBE1;
     --muted:#89837A;
     --rust:#C4553B;
@@ -32,20 +34,42 @@
   }
   .wrap{max-width:1180px;margin:0 auto;padding:28px 18px 80px;}
 
+  /* per-team accent tokens */
+  .t-bru{--accent:var(--gold);--accent-dim:var(--gold-dim);}
+  .t-cel{--accent:var(--green);--accent-dim:var(--green-dim);}
+  .wrap{--page-accent:var(--gold);}
+  .wrap.view-CEL{--page-accent:var(--green);}
+
   /* ---------- masthead ---------- */
-  .masthead{border-bottom:2px solid var(--gold);padding-bottom:18px;margin-bottom:26px;}
+  .masthead{border-bottom:2px solid var(--page-accent);padding-bottom:18px;margin-bottom:26px;transition:border-color .2s;}
   .eyebrow{
     font-family:'Barlow Condensed',sans-serif;
     text-transform:uppercase;letter-spacing:.22em;font-size:13px;font-weight:600;
-    color:var(--gold);margin:0 0 6px;
+    color:var(--page-accent);margin:0 0 6px;transition:color .2s;
   }
   h1{
     font-family:'Barlow Condensed',sans-serif;
     font-weight:700;text-transform:uppercase;letter-spacing:.01em;
     font-size:clamp(38px,8.5vw,74px);line-height:.92;margin:0;
   }
-  h1 span{color:var(--gold);}
+  h1 span{color:var(--page-accent);transition:color .2s;}
   .standfirst{color:var(--muted);max-width:62ch;margin:12px 0 0;font-size:14.5px;}
+
+  /* ---------- team switch ---------- */
+  .switch{display:flex;gap:0;margin:20px 0 0;border:1px solid var(--line);border-radius:3px;width:fit-content;overflow:hidden;}
+  .switch button{
+    font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.14em;
+    font-size:14px;font-weight:600;padding:9px 20px;border:0;border-right:1px solid var(--line);
+    background:transparent;color:var(--muted);cursor:pointer;transition:background .15s,color .15s;
+  }
+  .switch button:last-child{border-right:0;}
+  .switch button:hover{color:var(--paper);}
+  .switch button:focus-visible{outline:2px solid var(--page-accent);outline-offset:-2px;}
+  .switch button[aria-pressed="true"]{background:var(--panel-2);color:var(--accent,var(--gold));}
+  .switch .sw-count{
+    display:block;font-family:'IBM Plex Mono',monospace;font-size:9.5px;
+    letter-spacing:.08em;color:var(--muted);font-weight:400;margin-top:2px;
+  }
 
   /* ---------- section headers ---------- */
   .sec{margin-top:44px;}
@@ -67,10 +91,10 @@
     transition:border-color .15s,background .15s,transform .15s;
     display:flex;flex-direction:column;gap:2px;font:inherit;
   }
-  .plan:hover{border-color:var(--gold-dim);}
-  .plan:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
-  .plan[aria-pressed="true"]{background:var(--panel-2);border-color:var(--gold);}
-  .plan[aria-pressed="true"] .plan-name{color:var(--gold);}
+  .plan:hover{border-color:var(--accent-dim);}
+  .plan:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .plan[aria-pressed="true"]{background:var(--panel-2);border-color:var(--accent);}
+  .plan[aria-pressed="true"] .plan-name{color:var(--accent);}
   .plan-kicker{
     font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;
     text-transform:uppercase;color:var(--muted);
@@ -86,6 +110,13 @@
     padding-top:8px;border-top:1px dashed var(--line);
   }
   .pos{color:var(--gold);} .neg{color:var(--rust);}
+  .t-cel .pos{color:var(--green);}
+
+  .pending{
+    background:var(--panel);border:1px dashed var(--line);border-radius:3px;
+    padding:16px 16px;color:var(--muted);font-size:13.5px;max-width:74ch;
+  }
+  .pending b{color:var(--paper);font-weight:600;}
 
   /* ---------- the ribbon: signature element ---------- */
   .months{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px 26px;}
@@ -94,7 +125,7 @@
     letter-spacing:.2em;font-size:12px;color:var(--muted);
     border-bottom:1px solid var(--line);padding-bottom:5px;margin-bottom:9px;
   }
-  .month-label b{color:var(--gold);font-weight:600;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;}
+  .month-label b{color:var(--page-accent);font-weight:600;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;}
   .games{display:flex;flex-direction:column;gap:4px;}
   .game{
     display:grid;grid-template-columns:52px 1fr auto;align-items:center;gap:9px;
@@ -103,8 +134,11 @@
     border-left:3px solid #333;
     transition:background .18s,border-color .18s,opacity .18s;
   }
-  .game.on{background:var(--panel-2);border-left-color:var(--gold);}
+  .game.t-bru{border-left-color:#3B3120;}
+  .game.t-cel{border-left-color:#1D3A2A;}
+  .game.on{background:var(--panel-2);border-left-color:var(--accent);}
   .game.off{opacity:.3;}
+  .game.tbd{opacity:.45;border-left-style:dashed;}
   .g-date{
     font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);
     letter-spacing:-.01em;white-space:nowrap;
@@ -112,18 +146,20 @@
   .game.on .g-date{color:var(--paper);}
   .g-opp{
     font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;
-    font-size:19px;font-weight:600;letter-spacing:.04em;line-height:1;
+    font-size:19px;font-weight:600;letter-spacing:.04em;line-height:1;white-space:nowrap;
   }
-  .game.on .g-opp{color:var(--gold);}
+  .game.on .g-opp{color:var(--accent);}
   .g-time{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);margin-left:6px;letter-spacing:-.02em;}
   .g-price{font-family:'IBM Plex Mono',monospace;font-size:12.5px;text-align:right;white-space:nowrap;}
   .g-price small{display:block;font-size:10px;color:var(--muted);}
   .tag{
     font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.1em;
-    border:1px solid var(--gold-dim);color:var(--gold);border-radius:2px;
+    border:1px solid var(--accent-dim);color:var(--accent);border-radius:2px;
     padding:0 3px;margin-left:6px;vertical-align:2px;
   }
-  .tag.pre{border-color:var(--line);color:var(--muted);}
+  .tag.pre,.tag.cup{border-color:var(--line);color:var(--muted);}
+  .tag.team{border-color:var(--accent-dim);color:var(--accent);opacity:.8;}
+  .tag.dh{border-color:var(--rust);color:var(--rust);}
 
   /* ---------- value table ---------- */
   .tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
@@ -132,10 +168,16 @@
   th:first-child,td:first-child{text-align:left;}
   thead th{
     font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:.14em;
-    text-transform:uppercase;color:var(--muted);font-weight:500;border-bottom-color:var(--gold-dim);
+    text-transform:uppercase;color:var(--muted);font-weight:500;border-bottom-color:var(--page-accent);
   }
   tbody tr:hover{background:var(--panel);}
   td.name{font-family:'Barlow Condensed',sans-serif;font-size:17px;letter-spacing:.03em;text-transform:uppercase;}
+  td.name .tteam{
+    font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;
+    border:1px solid var(--accent-dim);color:var(--accent);border-radius:2px;
+    padding:1px 4px;margin-right:7px;vertical-align:2px;
+  }
+  td.empty{text-align:left;color:var(--muted);font-size:12.5px;white-space:normal;}
 
   .footnotes{margin-top:34px;border-top:1px solid var(--line);padding-top:16px;color:var(--muted);font-size:12.5px;}
   .footnotes p{margin:0 0 8px;max-width:76ch;}
@@ -144,17 +186,19 @@
   @media (max-width:520px){
     .game{grid-template-columns:46px 1fr auto;padding:6px 7px;gap:7px;}
     .g-opp{font-size:17px;}
+    .switch button{padding:8px 13px;font-size:13px;}
   }
   @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="wrap t-bru view-BRU" id="wrap">
 
   <header class="masthead">
     <p class="eyebrow">Rapid7 Rafters · TD Garden</p>
     <h1>2026–27 Home<br>Schedule &amp; <span>Game Plans</span></h1>
-    <p class="standfirst">Every Bruins home date with its Rafters window price. Pick a plan to light up the games it includes — the value math updates against face value for Row A and Rows B.</p>
+    <p class="standfirst">Every Bruins and Celtics home date with its Rafters window price. Switch teams, then pick a plan to light up the games it includes — the value math updates against face value for Row A and Rows B.</p>
+    <div class="switch" id="switch" role="group" aria-label="Choose team"></div>
   </header>
 
   <section class="sec">
@@ -168,7 +212,7 @@
   <section class="sec">
     <div class="sec-hd">
       <h2>The season</h2>
-      <span class="note" id="ribbonNote">44 home dates</span>
+      <span class="note" id="ribbonNote"></span>
     </div>
     <div class="months" id="months"></div>
   </section>
@@ -192,142 +236,284 @@
   </section>
 
   <div class="footnotes">
-    <p><b>Row A vs Rows B.</b> The pricing sheet lists two tiers per game — Row A (front of the balcony) runs $10 more than every other row. Plan pricing is a single number, so which tier you actually get changes the discount a lot.</p>
-    <p><b>Bergeron Night.</b> Patrice Bergeron's No. 37 goes up before the Dec 1 game vs Colorado — the most expensive date on the sheet at $326.50. It appears in the 22-Game Bergeron package only. The sale email says the 22-Game Plan guarantees access to the ceremony, but the 22-Game Black Friday game list doesn't include Dec 1. Worth pinning down with the rep before you buy.</p>
-    <p><b>Preseason.</b> Sep 20 vs Washington and Sep 22 vs Philadelphia are preseason and are priced at $61.50 — each 22-game plan spends one of its 22 slots on one.</p>
+    <p><b>Row A vs Rows B.</b> Both pricing sheets list two tiers per game — Row A (front of the balcony) runs $10 more than every other row. Plan pricing is a single number, so which tier you actually get changes the discount a lot.</p>
+    <p><b>Bergeron Night.</b> Patrice Bergeron's No. 37 goes up before the Dec 1 Bruins game vs Colorado — the most expensive date on either sheet at $326.50. It appears in the 22-Game Bergeron package only. The sale email says the 22-Game Plan guarantees access to the ceremony, but the 22-Game Black Friday game list doesn't include Dec 1. Worth pinning down with the rep before you buy.</p>
+    <p><b>Celtics plans.</b> The Celtics pricing sheet is a calendar only — it carries no plan packages, codes, or game lists. Every Celtics date below is shown at face value until that information lands.</p>
+    <p><b>NBA Cup.</b> Dec 4–11 are marked on the Celtics sheet as potential home dates for Cup group play, with flat $71.50 / $61.50 pricing and no opponent or tip time. They're shown dimmed as <b>TBD</b> and excluded from every face-value total.</p>
+    <p><b>Preseason.</b> Bruins Sep 20 vs Washington and Sep 22 vs Philadelphia are preseason at $61.50 — each 22-game plan spends one of its 22 slots on one. On the Celtics side, Oct 10 vs Philadelphia and Oct 14 vs Brooklyn carry that same $61.50 price against an Oct 20 season opener, so they're flagged preseason here — confirm with the rep, since the sheet doesn't label them.</p>
+    <p><b>Double headers.</b> Three dates put both teams in the building: Oct 10, Nov 27 and Dec 20. Dec 5 would be a fourth if the Celtics host an NBA Cup game that day. They're tagged <b>DH</b> in the combined view.</p>
   </div>
 
 </div>
 
 <script>
-const PLANS = {
-  BERG22: {name:"22-Game Bergeron", code:"P27RAFA22", cost:2662},
-  BF22:   {name:"22-Game Black Friday", code:"P27RAFB22", cost:2662},
-  RIV10:  {name:"10-Game Rivalry", code:"P27RAFA", cost:1310},
-  BF10:   {name:"10-Game Black Friday", code:"P27RAFB", cost:1310}
+const TEAMS = {
+  BRU: {name:"Bruins",  cls:"t-bru"},
+  CEL: {name:"Celtics", cls:"t-cel"}
 };
 
-// date, weekday, opponent, start, Row A price, plans, preseason?
-const G = [
- ["Sep 20","Sun","WSH","5:00",61.50,["BERG22"],1],
- ["Sep 22","Tue","PHI","7:00",61.50,["BF22"],1],
- ["Sep 29","Tue","NYR","8:00",151.50,["BERG22","RIV10"],0],
- ["Oct 5","Mon","OTT","7:30",76.50,["BERG22","BF10"],0],
- ["Oct 8","Thu","UTA","7:00",96.50,["BF22"],0],
- ["Oct 10","Sat","PHI","1:00",136.50,["BERG22"],0],
- ["Oct 22","Thu","NSH","7:00",76.50,["BERG22","RIV10"],0],
- ["Oct 24","Sat","SJS","7:00",126.50,["BF22","BF10"],0],
- ["Oct 31","Sat","CHI","1:00",136.50,["BF22"],0],
- ["Nov 2","Mon","VGK","7:00",111.50,["BERG22"],0],
- ["Nov 8","Sun","FLA","1:00",136.50,["BERG22"],0],
- ["Nov 12","Thu","MTL","7:00",171.50,["BF22","RIV10"],0],
- ["Nov 14","Sat","MIN","7:00",126.50,["BF22","BF10"],0],
- ["Nov 17","Tue","LAK","7:00",96.50,["BERG22"],0],
- ["Nov 21","Sat","WSH","7:00",151.50,["BF22","RIV10"],0],
- ["Nov 25","Wed","WPG","7:00",126.50,["BERG22"],0],
- ["Nov 27","Fri","TOR","1:00",226.50,["BF22","BF10"],0],
- ["Nov 29","Sun","VAN","5:00",76.50,["BF22"],0],
- ["Dec 1","Tue","COL","7:30",326.50,["BERG22"],0],
- ["Dec 5","Sat","DET","1:00",136.50,["BERG22"],0],
- ["Dec 12","Sat","NJD","1:00",151.50,["BF22","BF10"],0],
- ["Dec 15","Tue","FLA","7:00",136.50,["BF22"],0],
- ["Dec 17","Thu","STL","7:00",111.50,["BERG22","RIV10"],0],
- ["Dec 20","Sun","PHI","1:00",136.50,["BF22"],0],
- ["Dec 26","Sat","NYI","7:00",171.50,["BERG22"],0],
- ["Dec 30","Wed","EDM","7:30",171.50,["BF22","BF10"],0],
- ["Jan 5","Tue","BUF","7:30",111.50,["BF22","RIV10"],0],
- ["Jan 12","Tue","CAR","7:00",136.50,["BERG22"],0],
- ["Jan 14","Thu","DAL","7:00",111.50,["BF22","RIV10"],0],
- ["Jan 18","Mon","TBL","1:30",126.50,["BERG22"],0],
- ["Jan 26","Tue","CBJ","7:00",96.50,["BF22","BF10"],0],
- ["Jan 30","Sat","TOR","7:00",226.50,["BERG22","RIV10"],0],
- ["Feb 13","Sat","CBJ","7:00",126.50,["BERG22"],0],
- ["Feb 15","Mon","ANA","12:30",126.50,["BF22"],0],
- ["Feb 25","Thu","WSH","8:00",136.50,["BERG22","BF10"],0],
- ["Feb 27","Sat","DET","12:00",136.50,["BF22"],0],
- ["Mar 6","Sat","PIT","12:00",171.50,["BF22","RIV10"],0],
- ["Mar 8","Mon","SEA","7:00",96.50,["BERG22","BF10"],0],
- ["Mar 13","Sat","CGY","7:00",136.50,["BERG22"],0],
- ["Mar 15","Mon","NYI","7:00",111.50,["BF22"],0],
- ["Mar 23","Tue","BUF","7:00",111.50,["BERG22","BF10"],0],
- ["Mar 25","Thu","OTT","7:00",111.50,["BF22"],0],
- ["Mar 30","Tue","MTL","7:00",171.50,["BERG22"],0],
- ["Apr 3","Sat","TBL","3:00",171.50,["BF22","RIV10"],0]
-].map(r=>({date:r[0],day:r[1],opp:r[2],time:r[3],a:r[4],b:r[4]-10,plans:r[5],pre:r[6]}));
+const PLANS = {
+  BERG22: {team:"BRU", name:"22-Game Bergeron",     code:"P27RAFA22", cost:2662},
+  BF22:   {team:"BRU", name:"22-Game Black Friday", code:"P27RAFB22", cost:2662},
+  RIV10:  {team:"BRU", name:"10-Game Rivalry",      code:"P27RAFA",   cost:1310},
+  BF10:   {team:"BRU", name:"10-Game Black Friday", code:"P27RAFB",   cost:1310}
+  // Celtics plans pending — same shape, with team:"CEL".
+};
+
+// date, weekday, opponent, start, Row A price, plans, preseason?, tbd?
+const BRUINS = [
+ ["Sep 20","Sun","WSH","5:00",61.50,["BERG22"],1,0],
+ ["Sep 22","Tue","PHI","7:00",61.50,["BF22"],1,0],
+ ["Sep 29","Tue","NYR","8:00",151.50,["BERG22","RIV10"],0,0],
+ ["Oct 5","Mon","OTT","7:30",76.50,["BERG22","BF10"],0,0],
+ ["Oct 8","Thu","UTA","7:00",96.50,["BF22"],0,0],
+ ["Oct 10","Sat","PHI","1:00",136.50,["BERG22"],0,0],
+ ["Oct 22","Thu","NSH","7:00",76.50,["BERG22","RIV10"],0,0],
+ ["Oct 24","Sat","SJS","7:00",126.50,["BF22","BF10"],0,0],
+ ["Oct 31","Sat","CHI","1:00",136.50,["BF22"],0,0],
+ ["Nov 2","Mon","VGK","7:00",111.50,["BERG22"],0,0],
+ ["Nov 8","Sun","FLA","1:00",136.50,["BERG22"],0,0],
+ ["Nov 12","Thu","MTL","7:00",171.50,["BF22","RIV10"],0,0],
+ ["Nov 14","Sat","MIN","7:00",126.50,["BF22","BF10"],0,0],
+ ["Nov 17","Tue","LAK","7:00",96.50,["BERG22"],0,0],
+ ["Nov 21","Sat","WSH","7:00",151.50,["BF22","RIV10"],0,0],
+ ["Nov 25","Wed","WPG","7:00",126.50,["BERG22"],0,0],
+ ["Nov 27","Fri","TOR","1:00",226.50,["BF22","BF10"],0,0],
+ ["Nov 29","Sun","VAN","5:00",76.50,["BF22"],0,0],
+ ["Dec 1","Tue","COL","7:30",326.50,["BERG22"],0,0],
+ ["Dec 5","Sat","DET","1:00",136.50,["BERG22"],0,0],
+ ["Dec 12","Sat","NJD","1:00",151.50,["BF22","BF10"],0,0],
+ ["Dec 15","Tue","FLA","7:00",136.50,["BF22"],0,0],
+ ["Dec 17","Thu","STL","7:00",111.50,["BERG22","RIV10"],0,0],
+ ["Dec 20","Sun","PHI","1:00",136.50,["BF22"],0,0],
+ ["Dec 26","Sat","NYI","7:00",171.50,["BERG22"],0,0],
+ ["Dec 30","Wed","EDM","7:30",171.50,["BF22","BF10"],0,0],
+ ["Jan 5","Tue","BUF","7:30",111.50,["BF22","RIV10"],0,0],
+ ["Jan 12","Tue","CAR","7:00",136.50,["BERG22"],0,0],
+ ["Jan 14","Thu","DAL","7:00",111.50,["BF22","RIV10"],0,0],
+ ["Jan 18","Mon","TBL","1:30",126.50,["BERG22"],0,0],
+ ["Jan 26","Tue","CBJ","7:00",96.50,["BF22","BF10"],0,0],
+ ["Jan 30","Sat","TOR","7:00",226.50,["BERG22","RIV10"],0,0],
+ ["Feb 13","Sat","CBJ","7:00",126.50,["BERG22"],0,0],
+ ["Feb 15","Mon","ANA","12:30",126.50,["BF22"],0,0],
+ ["Feb 25","Thu","WSH","8:00",136.50,["BERG22","BF10"],0,0],
+ ["Feb 27","Sat","DET","12:00",136.50,["BF22"],0,0],
+ ["Mar 6","Sat","PIT","12:00",171.50,["BF22","RIV10"],0,0],
+ ["Mar 8","Mon","SEA","7:00",96.50,["BERG22","BF10"],0,0],
+ ["Mar 13","Sat","CGY","7:00",136.50,["BERG22"],0,0],
+ ["Mar 15","Mon","NYI","7:00",111.50,["BF22"],0,0],
+ ["Mar 23","Tue","BUF","7:00",111.50,["BERG22","BF10"],0,0],
+ ["Mar 25","Thu","OTT","7:00",111.50,["BF22"],0,0],
+ ["Mar 30","Tue","MTL","7:00",171.50,["BERG22"],0,0],
+ ["Apr 3","Sat","TBL","3:00",171.50,["BF22","RIV10"],0,0]
+];
+
+const CELTICS = [
+ ["Oct 10","Sat","PHI","8:00",61.50,[],1,0],
+ ["Oct 14","Wed","BKN","7:30",61.50,[],1,0],
+ ["Oct 23","Fri","NYK","7:00",226.50,[],0,0],
+ ["Oct 26","Mon","CHI","7:30",71.50,[],0,0],
+ ["Oct 27","Tue","BKN","7:30",71.50,[],0,0],
+ ["Oct 30","Fri","CHI","7:30",106.50,[],0,0],
+ ["Nov 4","Wed","MIL","7:30",71.50,[],0,0],
+ ["Nov 15","Sun","DAL","6:00",136.50,[],0,0],
+ ["Nov 16","Mon","ORL","7:00",71.50,[],0,0],
+ ["Nov 27","Fri","ATL","8:00",136.50,[],0,0],
+ ["Dec 2","Wed","BKN","7:30",71.50,[],0,0],
+ ["Dec 4","Fri","CUP","",71.50,[],0,1],
+ ["Dec 5","Sat","CUP","",71.50,[],0,1],
+ ["Dec 6","Sun","CUP","",71.50,[],0,1],
+ ["Dec 7","Mon","CUP","",71.50,[],0,1],
+ ["Dec 8","Tue","CUP","",71.50,[],0,1],
+ ["Dec 9","Wed","CUP","",71.50,[],0,1],
+ ["Dec 10","Thu","CUP","",71.50,[],0,1],
+ ["Dec 11","Fri","CUP","",71.50,[],0,1],
+ ["Dec 14","Mon","WAS","7:30",91.50,[],0,0],
+ ["Dec 16","Wed","WAS","7:00",91.50,[],0,0],
+ ["Dec 18","Fri","UTA","7:30",106.50,[],0,0],
+ ["Dec 20","Sun","DET","8:00",106.50,[],0,0],
+ ["Dec 23","Wed","POR","7:30",121.50,[],0,0],
+ ["Dec 25","Fri","MIA","2:30",171.50,[],0,0],
+ ["Dec 28","Mon","CLE","8:00",151.50,[],0,0],
+ ["Jan 11","Mon","HOU","7:30",106.50,[],0,0],
+ ["Jan 13","Wed","NYK","7:00",171.50,[],0,0],
+ ["Jan 16","Sat","BKN","7:00",106.50,[],0,0],
+ ["Jan 20","Wed","IND","7:30",91.50,[],0,0],
+ ["Jan 21","Thu","PHI","7:30",266.50,[],0,0],
+ ["Jan 23","Sat","BKN","7:00",136.50,[],0,0],
+ ["Jan 25","Mon","TOR","7:00",91.50,[],0,0],
+ ["Jan 27","Wed","LAC","7:30",91.50,[],0,0],
+ ["Jan 29","Fri","PHX","7:30",121.50,[],0,0],
+ ["Feb 2","Tue","LAL","8:00",171.50,[],0,0],
+ ["Feb 9","Tue","DEN","7:30",106.50,[],0,0],
+ ["Feb 10","Wed","GSW","7:30",151.50,[],0,0],
+ ["Feb 12","Fri","MIN","8:00",136.50,[],0,0],
+ ["Feb 14","Sun","TOR","1:00",136.50,[],0,0],
+ ["Feb 26","Fri","CLE","7:30",136.50,[],0,0],
+ ["Mar 7","Sun","PHI","1:00",266.50,[],0,0],
+ ["Mar 11","Thu","MEM","7:30",106.50,[],0,0],
+ ["Mar 12","Fri","OKC","7:30",171.50,[],0,0],
+ ["Mar 16","Tue","LAK","7:30",91.50,[],0,0],
+ ["Mar 18","Thu","ORL","7:30",106.50,[],0,0],
+ ["Mar 21","Sun","NOP","3:00",121.50,[],0,0],
+ ["Mar 24","Wed","SAS","7:30",171.50,[],0,0],
+ ["Apr 2","Fri","MIA","7:30",151.50,[],0,0],
+ ["Apr 11","Sun","MIL","6:00",106.50,[],0,0]
+];
 
 const MONTH_ORDER=["Sep","Oct","Nov","Dec","Jan","Feb","Mar","Apr"];
 const MONTH_FULL={Sep:"September",Oct:"October",Nov:"November",Dec:"December",
                   Jan:"January",Feb:"February",Mar:"March",Apr:"April"};
-const money=n=>"$"+n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+
+const mk=(team)=>(r)=>({
+  team, date:r[0], day:r[1], opp:r[2], time:r[3],
+  a:r[4], b:r[4]-10, plans:r[5], pre:r[6], tbd:r[7],
+  key: MONTH_ORDER.indexOf(r[0].split(" ")[0])*100 + parseInt(r[0].split(" ")[1],10)
+});
+const G = [...BRUINS.map(mk("BRU")), ...CELTICS.map(mk("CEL"))].sort((x,y)=>x.key-y.key);
+
+/* dates with a real (non-TBD) game from both teams */
+const DH = new Set();
+G.filter(g=>!g.tbd).forEach(g=>{
+  if(G.some(o=>!o.tbd && o.date===g.date && o.team!==g.team)) DH.add(g.date);
+});
+
+const money =n=>"$"+n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
 const money0=n=>"$"+Math.round(n).toLocaleString("en-US");
 
-let active=null;
+let view="BRU", active=null;
+
+const teamsInView = ()=> view==="ALL" ? ["BRU","CEL"] : [view];
+const gamesInView = ()=> G.filter(g=>teamsInView().includes(g.team));
+const plansInView = ()=> Object.entries(PLANS).filter(([,p])=>teamsInView().includes(p.team));
 
 function faces(key){
-  const list=G.filter(g=>g.plans.includes(key));
+  const list=G.filter(g=>!g.tbd && g.plans.includes(key));
   return {n:list.length,
           a:list.reduce((s,g)=>s+g.a,0),
           b:list.reduce((s,g)=>s+g.b,0)};
 }
 
-/* plan cards */
+/* ---------- team switch ---------- */
+const wrap=document.getElementById("wrap");
+const switchEl=document.getElementById("switch");
+[["BRU","Bruins"],["CEL","Celtics"],["ALL","Combined"]].forEach(([k,label])=>{
+  const n = G.filter(g=>!g.tbd && (k==="ALL" || g.team===k)).length;
+  const b=document.createElement("button");
+  b.type="button"; b.dataset.view=k;
+  b.setAttribute("aria-pressed", String(k===view));
+  b.innerHTML=`${label}<span class="sw-count">${n} dates</span>`;
+  b.addEventListener("click",()=>setView(k));
+  switchEl.appendChild(b);
+});
+
+function setView(k){
+  view=k; active=null;
+  wrap.className = "wrap view-"+k+" "+(k==="CEL" ? "t-cel" : "t-bru");
+  switchEl.querySelectorAll("button").forEach(b=>
+    b.setAttribute("aria-pressed", String(b.dataset.view===k)));
+  renderPlans(); renderRibbon(); renderTable(); select(null);
+}
+
+/* ---------- plan cards ---------- */
 const plansEl=document.getElementById("plans");
-Object.entries(PLANS).forEach(([key,p])=>{
-  const f=faces(key), saveA=f.a-p.cost;
-  const btn=document.createElement("button");
-  btn.className="plan"; btn.type="button";
-  btn.setAttribute("aria-pressed","false");
-  btn.dataset.key=key;
-  btn.innerHTML=
-    `<span class="plan-kicker">${f.n} games · ${p.code}</span>`+
-    `<span class="plan-name">${p.name.replace(/^\d+-Game /,"")}</span>`+
-    `<span class="plan-price">${money0(p.cost)}</span>`+
-    `<span class="plan-sub">${money(p.cost/f.n)} per game</span>`+
-    `<span class="plan-delta ${saveA>0?"pos":"neg"}">`+
-      `${saveA>0?"Saves":"Costs"} ${money(Math.abs(saveA))} vs Row A face</span>`;
-  btn.addEventListener("click",()=>select(key===active?null:key));
-  plansEl.appendChild(btn);
-});
-
-/* schedule ribbon */
-const monthsEl=document.getElementById("months");
-MONTH_ORDER.forEach(m=>{
-  const list=G.filter(g=>g.date.startsWith(m));
-  if(!list.length) return;
-  const col=document.createElement("div");
-  col.innerHTML=`<div class="month-label">${MONTH_FULL[m]} <b>${list.length}</b></div>`;
-  const box=document.createElement("div"); box.className="games";
-  list.forEach(g=>{
-    const el=document.createElement("div");
-    el.className="game"; el.dataset.plans=g.plans.join(",");
-    el.innerHTML=
-      `<span class="g-date">${g.day} ${g.date.split(" ")[1]}</span>`+
-      `<span><span class="g-opp">${g.opp}</span>`+
-        (g.pre?`<span class="tag pre">PRE</span>`:``)+
-        (g.opp==="COL"?`<span class="tag">37</span>`:``)+
-        `<span class="g-time">${g.time}</span></span>`+
-      `<span class="g-price">${money(g.a)}<small>${money(g.b)}</small></span>`;
-    box.appendChild(el);
+function renderPlans(){
+  plansEl.innerHTML="";
+  const list=plansInView();
+  if(!list.length){
+    plansEl.className="";
+    plansEl.innerHTML=`<div class="pending"><b>Celtics plan packages aren't out yet.</b> `+
+      `The pricing sheet is a calendar only — no plan names, codes, costs or game lists. `+
+      `Every Celtics date is shown at face value below; the plan cards and value math `+
+      `light up as soon as the packages land.</div>`;
+    return;
+  }
+  plansEl.className="plans";
+  list.forEach(([key,p])=>{
+    const f=faces(key), saveA=f.a-p.cost;
+    const btn=document.createElement("button");
+    btn.className="plan "+TEAMS[p.team].cls; btn.type="button";
+    btn.setAttribute("aria-pressed","false");
+    btn.dataset.key=key;
+    btn.innerHTML=
+      `<span class="plan-kicker">${f.n} games · ${p.code}</span>`+
+      `<span class="plan-name">${p.name.replace(/^\d+-Game /,"")}</span>`+
+      `<span class="plan-price">${money0(p.cost)}</span>`+
+      `<span class="plan-sub">${money(p.cost/f.n)} per game</span>`+
+      `<span class="plan-delta ${saveA>0?"pos":"neg"}">`+
+        `${saveA>0?"Saves":"Costs"} ${money(Math.abs(saveA))} vs Row A face</span>`;
+    btn.addEventListener("click",()=>select(key===active?null:key));
+    plansEl.appendChild(btn);
   });
-  col.appendChild(box); monthsEl.appendChild(col);
-});
+}
 
-/* value table */
+/* ---------- schedule ribbon ---------- */
+const monthsEl=document.getElementById("months");
+function renderRibbon(){
+  monthsEl.innerHTML="";
+  const vis=gamesInView();
+  MONTH_ORDER.forEach(m=>{
+    const list=vis.filter(g=>g.date.startsWith(m+" "));
+    if(!list.length) return;
+    const col=document.createElement("div");
+    col.innerHTML=`<div class="month-label">${MONTH_FULL[m]} <b>${list.length}</b></div>`;
+    const box=document.createElement("div"); box.className="games";
+    list.forEach(g=>{
+      const el=document.createElement("div");
+      el.className="game "+TEAMS[g.team].cls+(g.tbd?" tbd":"");
+      el.dataset.plans=g.plans.join(",");
+      el.dataset.team=g.team;
+      el.innerHTML=
+        `<span class="g-date">${g.day} ${g.date.split(" ")[1]}</span>`+
+        `<span><span class="g-opp">${g.tbd?"NBA CUP":g.opp}</span>`+
+          (view==="ALL"?`<span class="tag team">${g.team}</span>`:``)+
+          (g.tbd?`<span class="tag cup">TBD</span>`:``)+
+          (g.pre?`<span class="tag pre">PRE</span>`:``)+
+          (g.team==="BRU"&&g.opp==="COL"?`<span class="tag">37</span>`:``)+
+          (view==="ALL"&&DH.has(g.date)?`<span class="tag dh">DH</span>`:``)+
+          (g.time?`<span class="g-time">${g.time}</span>`:``)+
+        `</span>`+
+        `<span class="g-price">${money(g.a)}<small>${money(g.b)}</small></span>`;
+      box.appendChild(el);
+    });
+    col.appendChild(box); monthsEl.appendChild(col);
+  });
+}
+
+/* ---------- value table ---------- */
 const tb=document.querySelector("#valueTable tbody");
-Object.entries(PLANS).forEach(([key,p])=>{
-  const f=faces(key), dA=f.a-p.cost, dB=f.b-p.cost;
-  const pct=(d,face)=>(d/face*100).toFixed(1)+"%";
-  const tr=document.createElement("tr");
-  tr.innerHTML=
-    `<td class="name">${p.name}</td>`+
-    `<td>${f.n}</td><td>${money0(p.cost)}</td><td>${money(p.cost/f.n)}</td>`+
-    `<td>${money(f.a)}</td><td class="${dA>0?"pos":"neg"}">${dA>0?"−":"+"}${money(Math.abs(dA))} · ${pct(Math.abs(dA),f.a)}</td>`+
-    `<td>${money(f.b)}</td><td class="${dB>0?"pos":"neg"}">${dB>0?"−":"+"}${money(Math.abs(dB))} · ${pct(Math.abs(dB),f.b)}</td>`;
-  tb.appendChild(tr);
-});
+function renderTable(){
+  tb.innerHTML="";
+  const list=plansInView();
+  if(!list.length){
+    tb.innerHTML=`<tr><td class="empty" colspan="8">`+
+      `No Celtics packages published yet — nothing to price against face value.</td></tr>`;
+    return;
+  }
+  list.forEach(([key,p])=>{
+    const f=faces(key), dA=f.a-p.cost, dB=f.b-p.cost;
+    const pct=(d,face)=>(d/face*100).toFixed(1)+"%";
+    const tr=document.createElement("tr");
+    tr.className=TEAMS[p.team].cls;
+    tr.innerHTML=
+      `<td class="name">${view==="ALL"?`<span class="tteam">${p.team}</span>`:``}${p.name}</td>`+
+      `<td>${f.n}</td><td>${money0(p.cost)}</td><td>${money(p.cost/f.n)}</td>`+
+      `<td>${money(f.a)}</td><td class="${dA>0?"pos":"neg"}">${dA>0?"−":"+"}${money(Math.abs(dA))} · ${pct(Math.abs(dA),f.a)}</td>`+
+      `<td>${money(f.b)}</td><td class="${dB>0?"pos":"neg"}">${dB>0?"−":"+"}${money(Math.abs(dB))} · ${pct(Math.abs(dB),f.b)}</td>`;
+    tb.appendChild(tr);
+  });
+}
 
-/* selection */
+/* ---------- selection ---------- */
 const note=document.getElementById("ribbonNote");
+function baseNote(){
+  const vis=gamesInView();
+  const real=vis.filter(g=>!g.tbd).length, tbd=vis.length-real;
+  if(view==="ALL"){
+    return `${real} dates · ${DH.size} double headers · ${tbd} NBA Cup TBD`;
+  }
+  return tbd ? `${real} home dates · ${tbd} NBA Cup TBD` : `${real} home dates`;
+}
 function select(key){
   active=key;
   document.querySelectorAll(".plan").forEach(b=>
@@ -339,11 +525,14 @@ function select(key){
   });
   if(key){
     const f=faces(key);
-    note.textContent = `${PLANS[key].name} · ${f.n} of 44 dates`;
+    const total=G.filter(g=>g.team===PLANS[key].team && !g.tbd).length;
+    note.textContent = `${PLANS[key].name} · ${f.n} of ${total} dates`;
   } else {
-    note.textContent = "44 home dates";
+    note.textContent = baseNote();
   }
 }
+
+setView("BRU");
 </script>
 </body>
 </html>
