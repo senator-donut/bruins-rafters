@@ -39,6 +39,7 @@
   /* per-team accent tokens */
   .t-bru{--accent:var(--gold);--accent-dim:var(--gold-dim);}
   .t-cel{--accent:var(--green);--accent-dim:var(--green-dim);}
+  .t-evt{--accent:var(--chrome);--accent-dim:var(--chrome-dim);}
   .wrap{--page-accent:var(--chrome);}
 
   /* ---------- masthead ---------- */
@@ -69,6 +70,7 @@
   .switch button{--accent:var(--chrome);}
   .switch button.t-bru{--accent:var(--gold);}
   .switch button.t-cel{--accent:var(--green);}
+  .switch button.t-evt{--accent:var(--chrome);}
   .switch button[aria-pressed="true"]{background:var(--panel-2);color:var(--accent);}
   .switch .sw-count{
     display:block;font-family:'IBM Plex Mono',monospace;font-size:9.5px;
@@ -132,7 +134,7 @@
   .month-label b{color:var(--page-accent);font-weight:600;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;}
   .games{display:flex;flex-direction:column;gap:4px;}
   .game{
-    display:grid;grid-template-columns:52px 1fr auto;align-items:center;gap:9px;
+    display:grid;grid-template-columns:52px minmax(0,1fr) auto;align-items:center;gap:9px;
     padding:7px 9px;border-radius:2px;
     background:var(--panel);
     border-left:3px solid #333;
@@ -140,6 +142,14 @@
   }
   .game.t-bru{border-left-color:#3B3120;}
   .game.t-cel{border-left-color:#1D3A2A;}
+  .game.t-evt{border-left-color:#38342D;background:transparent;}
+  /* events carry no price, so they drop the third column and read quieter */
+  .game.evt{grid-template-columns:52px minmax(0,1fr);}
+  .game.evt .g-opp{
+    font-family:'IBM Plex Sans',system-ui,sans-serif;
+    font-size:13.5px;font-weight:500;text-transform:none;
+    letter-spacing:0;white-space:normal;color:var(--chrome);
+  }
   .game.on{background:var(--panel-2);border-left-color:var(--accent);}
   .game.off{opacity:.3;}
   .game.tbd{opacity:.45;border-left-style:dashed;}
@@ -155,17 +165,19 @@
     font-size:19px;font-weight:600;letter-spacing:.04em;line-height:1;white-space:nowrap;
   }
   .game.on .g-opp{color:var(--accent);}
-  .g-time{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);margin-left:6px;letter-spacing:-.02em;}
+  .g-meta{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 6px;}
+  .g-time{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);letter-spacing:-.02em;}
   .g-price{font-family:'IBM Plex Mono',monospace;font-size:12.5px;text-align:right;white-space:nowrap;}
   .g-price small{display:block;font-size:10px;color:var(--muted);}
   .tag{
     font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.1em;
     border:1px solid var(--accent-dim);color:var(--accent);border-radius:2px;
-    padding:0 3px;margin-left:6px;vertical-align:2px;
+    padding:0 3px;vertical-align:2px;white-space:nowrap;
   }
   .tag.pre,.tag.cup{border-color:var(--line);color:var(--muted);}
   .tag.team{border-color:var(--accent-dim);color:var(--accent);opacity:.8;}
   .tag.dh{border-color:var(--rust);color:var(--rust);}
+  .tag.nos{border-color:var(--rust);color:var(--rust);}
 
   /* ---------- value table ---------- */
   .tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
@@ -197,20 +209,24 @@
   .footnotes b{color:var(--paper);font-weight:600;}
 
   @media (max-width:520px){
-    .game{grid-template-columns:46px 1fr auto;padding:6px 7px;gap:7px;}
+    .game{grid-template-columns:46px minmax(0,1fr) auto;padding:6px 7px;gap:7px;}
     .g-opp{font-size:17px;}
-    .switch button{padding:8px 13px;font-size:13px;}
+    /* four buttons no longer fit on one line — stack them 2x2 */
+    .switch{display:grid;grid-template-columns:1fr 1fr;width:100%;}
+    .switch button{padding:8px 13px;font-size:13px;border-right:1px solid var(--line);}
+    .switch button:nth-child(2n){border-right:0;}
+    .switch button:nth-child(-n+2){border-bottom:1px solid var(--line);}
   }
   @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
 </style>
 </head>
 <body>
-<div class="wrap view-BRU" id="wrap">
+<div class="wrap view-ALL" id="wrap">
 
   <header class="masthead">
     <p class="eyebrow">Rapid7 Rafters · TD Garden</p>
     <h1>2026–27 Home<br>Schedule &amp; <span>Game Plans</span></h1>
-    <p class="standfirst">Every Bruins and Celtics home date with its Rafters window price. Switch teams, then pick a plan to light up the games it includes — the value math updates against face value for Row A and Rows B.</p>
+    <p class="standfirst">Every Bruins and Celtics home date with its Rafters window price, plus the concerts and shows that fill the rest of the year at the Garden. Pick a plan to light up the games it includes — the value math updates against face value for Row A and Rows B.</p>
     <div class="switch" id="switch" role="group" aria-label="Choose team"></div>
   </header>
 
@@ -257,6 +273,8 @@
     <p><b>The pricing sheet has four wrong opponents.</b> On four Celtics dates the pricing calendar disagrees with the package sheets: Oct 14, Dec 2 and Jan 23 are printed as Brooklyn but are Charlotte, and Mar 16 is printed as the Lakers but is Sacramento. The package sheets are right, and the published NBA schedule confirms all four. The pricing calendar also convicts itself twice over — it lists five home games against Brooklyn, where a division rival is two, and it lists the Lakers twice, as both LAL and LAK. This page uses the package sheets' opponents; the prices are unaffected, since only the labels differ.</p>
     <p><b>NBA Cup.</b> Dec 4–11 is a single window on the Celtics sheet with eight potential home dates, flat $71.50 / $61.50 and no opponent or tip time. Both 22-game plans include exactly one Cup game in it — Plan A a semifinal, Plan B a quarterfinal — which is why each is 21 dated games plus one Cup slot. That slot is counted in the face-value totals at Cup price; selecting either plan lights the whole window, since the actual date isn't known yet. The eight rows are otherwise excluded from every total.</p>
     <p><b>Preseason.</b> Bruins Sep 20 vs Washington and Sep 22 vs Philadelphia are preseason at $61.50 — each 22-game plan spends one of its 22 slots on one. The Celtics plans do the same: Oct 10 vs Philadelphia (Plan B) and Oct 14 vs Charlotte (Plan A), both marked preseason on the package sheets and both $61.50.</p>
+    <p><b>Six dates you can't buy into.</b> Sep 29, Nov 8, Dec 1 and Mar 6 for the Bruins, and Oct 23 and Jan 21 for the Celtics, are tagged <b>NO SINGLES</b>: every other home date appears on the TD Garden buy page, and these six don't, which means no single-game inventory was left as of Aug 24, 2026. Both home openers are on that list, and so is Bergeron night. A plan is the only route in — and three of the six sit in the 22-Game Bergeron package, which is an argument for it that face value alone doesn't show. Inventory can come back, so treat it as a snapshot, not a verdict.</p>
+    <p><b>Concerts and shows.</b> The 36 non-team events come from the member buy listing, which carries no prices — so they're schedule only and never touch the plan math. None of them collides with a game date. They're shown in the neutral stone, without a price column, to keep them clearly separate from anything a package covers. The listing also runs past the season at both ends, which is why August appears and why the last row is Apr 12.</p>
     <p><b>Double headers.</b> Three dates put both teams in the building: Oct 10, Nov 27 and Dec 20. Dec 5 would be a fourth if the Celtics host an NBA Cup game that day. They're tagged <b>DH</b> in the combined view.</p>
   </div>
 
@@ -265,7 +283,8 @@
 <script>
 const TEAMS = {
   BRU: {name:"Bruins",  cls:"t-bru"},
-  CEL: {name:"Celtics", cls:"t-cel"}
+  CEL: {name:"Celtics", cls:"t-cel"},
+  EVT: {name:"Events",  cls:"t-evt"}
 };
 
 const PLANS = {
@@ -385,16 +404,75 @@ const CELTICS = [
  ["Apr 11","Sun","MIL","6:00",106.50,["CELB22","CELBF"],0,0],
 ];
 
-const MONTH_ORDER=["Sep","Oct","Nov","Dec","Jan","Feb","Mar","Apr"];
-const MONTH_FULL={Sep:"September",Oct:"October",Nov:"November",Dec:"December",
+/* Concerts, shows and other TD Garden events, from the member buy listing.
+   The listing carries no prices, so these never enter the plan value math. */
+const EVENTS = [
+ ["Aug 28","Fri","Kacey Musgraves","7:30"],
+ ["Sep 5","Sat","Don Toliver","7:30"],
+ ["Sep 9","Wed","Iron Maiden","7:20"],
+ ["Sep 12","Sat","RUSH","7:30"],
+ ["Sep 14","Mon","RUSH","7:30"],
+ ["Sep 19","Sat","Mt. Joy","8:00"],
+ ["Sep 24","Thu","Charli xcx","8:00"],
+ ["Sep 25","Fri","Jonas Brothers","7:30"],
+ ["Sep 26","Sat","Don Omar","8:00"],
+ ["Sep 27","Sun","Weezer","7:00"],
+ ["Oct 1","Thu","Gorillaz","7:30"],
+ ["Oct 2","Fri","Smashing Pumpkins","8:00"],
+ ["Oct 3","Sat","beabadoobee","8:00"],
+ ["Oct 6","Tue","Phoebe Bridgers","7:30"],
+ ["Oct 7","Wed","Phoebe Bridgers","7:30"],
+ ["Oct 9","Fri","Teddy Swims","7:00"],
+ ["Oct 13","Tue","Johnny Blue Skies","8:00"],
+ ["Oct 15","Thu","Olivia Rodrigo","7:00"],
+ ["Oct 17","Sat","Olivia Rodrigo","7:00"],
+ ["Oct 18","Sun","Olivia Rodrigo","7:00"],
+ ["Oct 25","Sun","Rod Wave","8:00"],
+ ["Oct 28","Wed","Katseye","8:00"],
+ ["Oct 29","Thu","John Summit","7:00"],
+ ["Nov 3","Tue","Disney Worlds Collide","7:00"],
+ ["Nov 6","Fri","UCONN","7:00"],
+ ["Nov 7","Sat","Comics Come Home","8:00"],
+ ["Nov 10","Tue","Journey","7:30"],
+ ["Nov 18","Wed","Sombr","7:00"],
+ ["Nov 19","Thu","Il Volo","8:00"],
+ ["Nov 23","Mon","Doja Cat","7:30"],
+ ["Dec 10","Thu","Andrea Bocelli","8:00"],
+ ["Jan 2","Sat","Professional Bull Riders","7:45"],
+ ["Jan 3","Sun","Professional Bull Riders","1:45"],
+ ["Mar 1","Mon","Gracie Abrams","8:00"],
+ ["Mar 2","Tue","Gracie Abrams","8:00"],
+ ["Apr 12","Mon","Niall Horan","7:30"],
+];
+
+const MONTH_ORDER=["Aug","Sep","Oct","Nov","Dec","Jan","Feb","Mar","Apr"];
+const MONTH_FULL={Aug:"August",Sep:"September",Oct:"October",Nov:"November",Dec:"December",
                   Jan:"January",Feb:"February",Mar:"March",Apr:"April"};
+
+/* Home dates absent from the TD Garden buy listing of Aug 24, 2026 — no
+   single-game inventory, so a plan is the only way in. */
+const NO_SINGLES = new Set([
+  "BRU Sep 29","BRU Nov 8","BRU Dec 1","BRU Mar 6",
+  "CEL Oct 23","CEL Jan 21"
+]);
 
 const mk=(team)=>(r)=>({
   team, date:r[0], day:r[1], opp:r[2], time:r[3],
   a:r[4], b:r[4]-10, plans:r[5], pre:r[6], tbd:r[7],
-  key: MONTH_ORDER.indexOf(r[0].split(" ")[0])*100 + parseInt(r[0].split(" ")[1],10)
+  nos: NO_SINGLES.has(team+" "+r[0]) ? 1 : 0,
+  key: dayKey(r[0])
 });
-const G = [...BRUINS.map(mk("BRU")), ...CELTICS.map(mk("CEL"))].sort((x,y)=>x.key-y.key);
+const dayKey = d=>MONTH_ORDER.indexOf(d.split(" ")[0])*100 + parseInt(d.split(" ")[1],10);
+/* every listed start is an afternoon or evening one, so 12:xx and 1:00 are PM too */
+const clock = t=>{ if(!t) return 0; const [h,m]=t.split(":").map(Number); return (h<12?h+12:h)*60+m; };
+
+const mkEvent = r=>({
+  team:"EVT", date:r[0], day:r[1], name:r[2], time:r[3],
+  plans:[], pre:0, tbd:0, nos:0, key:dayKey(r[0])
+});
+
+const G = [...BRUINS.map(mk("BRU")), ...CELTICS.map(mk("CEL")), ...EVENTS.map(mkEvent)]
+  .sort((x,y)=> x.key-y.key || clock(x.time)-clock(y.time));
 
 /* dates with a real (non-TBD) game from both teams */
 const DH = new Set();
@@ -405,9 +483,9 @@ G.filter(g=>!g.tbd).forEach(g=>{
 const money =n=>"$"+n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
 const money0=n=>"$"+Math.round(n).toLocaleString("en-US");
 
-let view="BRU", active=null;
+let view="ALL", active=null;
 
-const teamsInView = ()=> view==="ALL" ? ["BRU","CEL"] : [view];
+const teamsInView = ()=> view==="ALL" ? ["BRU","CEL","EVT"] : [view];
 const gamesInView = ()=> G.filter(g=>teamsInView().includes(g.team));
 const plansInView = ()=> Object.entries(PLANS).filter(([,p])=>teamsInView().includes(p.team));
 
@@ -422,13 +500,14 @@ function faces(key){
 /* ---------- team switch ---------- */
 const wrap=document.getElementById("wrap");
 const switchEl=document.getElementById("switch");
-[["BRU","Bruins"],["CEL","Celtics"],["ALL","Combined"]].forEach(([k,label])=>{
+[["ALL","Combined"],["BRU","Bruins"],["CEL","Celtics"],["EVT","Events"]].forEach(([k,label])=>{
   const n = G.filter(g=>!g.tbd && (k==="ALL" || g.team===k)).length;
+  const noun = k==="ALL" ? "events" : k==="EVT" ? "shows" : "dates";
   const b=document.createElement("button");
   b.type="button"; b.dataset.view=k;
   b.className = TEAMS[k] ? TEAMS[k].cls : "";
   b.setAttribute("aria-pressed", String(k===view));
-  b.innerHTML=`${label}<span class="sw-count">${n} dates</span>`;
+  b.innerHTML=`${label}<span class="sw-count">${n} ${noun}</span>`;
   b.addEventListener("click",()=>setView(k));
   switchEl.appendChild(b);
 });
@@ -448,7 +527,12 @@ function renderPlans(){
   const list=plansInView();
   if(!list.length){
     plansEl.className="";
-    plansEl.innerHTML=`<div class="pending"><b>No packages published for this team yet.</b></div>`;
+    plansEl.innerHTML= view==="EVT"
+      ? `<div class="pending"><b>Concerts and shows are sold ticket by ticket.</b> `+
+        `No Rafters package covers them, and the buy listing carries no prices, `+
+        `so there's nothing to weigh against face value here — these dates are `+
+        `included to show what else lands in your seats across the year.</div>`
+      : `<div class="pending"><b>No packages published for this team yet.</b></div>`;
     return;
   }
   plansEl.className="plans";
@@ -487,21 +571,23 @@ function renderRibbon(){
     const box=document.createElement("div"); box.className="games";
     list.forEach(g=>{
       const el=document.createElement("div");
-      el.className="game "+TEAMS[g.team].cls+(g.tbd?" tbd":"");
+      const evt=g.team==="EVT";
+      el.className="game "+TEAMS[g.team].cls+(g.tbd?" tbd":"")+(evt?" evt":"");
       el.dataset.plans=g.plans.join(",");
       el.dataset.team=g.team;
       el.dataset.tbd=g.tbd?"1":"0";
       el.innerHTML=
         `<span class="g-date">${g.day} ${g.date.split(" ")[1]}</span>`+
-        `<span><span class="g-opp">${g.tbd?"NBA CUP":g.opp}</span>`+
-          (view==="ALL"?`<span class="tag team">${g.team}</span>`:``)+
+        `<span class="g-meta"><span class="g-opp">${evt?g.name:(g.tbd?"NBA CUP":g.opp)}</span>`+
+          (view==="ALL"&&!evt?`<span class="tag team">${g.team}</span>`:``)+
           (g.tbd?`<span class="tag cup">TBD</span>`:``)+
           (g.pre?`<span class="tag pre">PRE</span>`:``)+
+          (g.nos?`<span class="tag nos" title="Not listed on the TD Garden buy page — no single-game tickets available">NO SINGLES</span>`:``)+
           (g.team==="BRU"&&g.opp==="COL"?`<span class="tag">37</span>`:``)+
           (view==="ALL"&&DH.has(g.date)?`<span class="tag dh">DH</span>`:``)+
           (g.time?`<span class="g-time">${g.time}</span>`:``)+
         `</span>`+
-        `<span class="g-price">${money(g.a)}<small>${money(g.b)}</small></span>`;
+        (evt?``:`<span class="g-price">${money(g.a)}<small>${money(g.b)}</small></span>`);
       box.appendChild(el);
     });
     col.appendChild(box); monthsEl.appendChild(col);
@@ -514,7 +600,9 @@ function renderTable(){
   tb.innerHTML="";
   const list=plansInView();
   if(!list.length){
-    tb.innerHTML=`<tr><td class="empty" colspan="8">No packages published for this team yet.</td></tr>`;
+    tb.innerHTML=`<tr><td class="empty" colspan="8">${view==="EVT"
+      ? "Single-ticket events — no package to price."
+      : "No packages published for this team yet."}</td></tr>`;
     return;
   }
   list.forEach(([key,p])=>{
@@ -544,8 +632,10 @@ function baseNote(){
   const vis=gamesInView();
   const real=vis.filter(g=>!g.tbd).length, tbd=vis.length-real;
   if(view==="ALL"){
-    return `${real} dates · ${DH.size} double headers · ${tbd} NBA Cup TBD`;
+    const shows=vis.filter(g=>g.team==="EVT").length;
+    return `${real-shows} home dates · ${shows} shows · ${DH.size} double headers · ${tbd} NBA Cup TBD`;
   }
+  if(view==="EVT") return `${real} concerts and shows · no plan pricing`;
   return tbd ? `${real} home dates · ${tbd} NBA Cup TBD` : `${real} home dates`;
 }
 function select(key){
@@ -571,7 +661,7 @@ function select(key){
   }
 }
 
-setView("BRU");
+setView("ALL");
 </script>
 </body>
 </html>
