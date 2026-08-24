@@ -139,6 +139,8 @@
   .game.on{background:var(--panel-2);border-left-color:var(--accent);}
   .game.off{opacity:.3;}
   .game.tbd{opacity:.45;border-left-style:dashed;}
+  .game.maybe{opacity:.8;border-left-color:var(--accent);border-left-style:dashed;background:var(--panel-2);}
+  .game.maybe .g-opp{color:var(--accent);}
   .g-date{
     font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);
     letter-spacing:-.01em;white-space:nowrap;
@@ -178,6 +180,13 @@
     padding:1px 4px;margin-right:7px;vertical-align:2px;
   }
   td.empty{text-align:left;color:var(--muted);font-size:12.5px;white-space:normal;}
+  td.na{color:var(--muted);}
+  .cupmark{
+    font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;
+    color:var(--muted);border:1px solid var(--line);border-radius:2px;
+    padding:1px 4px;margin-left:8px;vertical-align:2px;text-transform:none;
+  }
+  .plan-delta.tbd-cost{color:var(--muted);}
 
   .footnotes{margin-top:34px;border-top:1px solid var(--line);padding-top:16px;color:var(--muted);font-size:12.5px;}
   .footnotes p{margin:0 0 8px;max-width:76ch;}
@@ -236,11 +245,13 @@
   </section>
 
   <div class="footnotes">
+    <p><b>The two 22-game plans split the season.</b> On both teams, Plan A and Plan B divide every dated home game between them with no overlap — 21 dates each on the Celtics side, 22 each on the Bruins side. The 10-game plans draw from both.</p>
     <p><b>Row A vs Rows B.</b> Both pricing sheets list two tiers per game — Row A (front of the balcony) runs $10 more than every other row. Plan pricing is a single number, so which tier you actually get changes the discount a lot.</p>
     <p><b>Bergeron Night.</b> Patrice Bergeron's No. 37 goes up before the Dec 1 Bruins game vs Colorado — the most expensive date on either sheet at $326.50. It appears in the 22-Game Bergeron package only. The sale email says the 22-Game Plan guarantees access to the ceremony, but the 22-Game Black Friday game list doesn't include Dec 1. Worth pinning down with the rep before you buy.</p>
-    <p><b>Celtics plans.</b> The Celtics pricing sheet is a calendar only — it carries no plan packages, codes, or game lists. Every Celtics date below is shown at face value until that information lands.</p>
-    <p><b>NBA Cup.</b> Dec 4–11 are marked on the Celtics sheet as potential home dates for Cup group play, with flat $71.50 / $61.50 pricing and no opponent or tip time. They're shown dimmed as <b>TBD</b> and excluded from every face-value total.</p>
-    <p><b>Preseason.</b> Bruins Sep 20 vs Washington and Sep 22 vs Philadelphia are preseason at $61.50 — each 22-game plan spends one of its 22 slots on one. On the Celtics side, Oct 10 vs Philadelphia and Oct 14 vs Brooklyn carry that same $61.50 price against an Oct 20 season opener, so they're flagged preseason here — confirm with the rep, since the sheet doesn't label them.</p>
+    <p><b>Celtics plan costs.</b> The four Celtics package sheets list every game but carry no price. Until the sale email numbers land, those plans show Row A face value instead of a plan cost, and the cost columns in the table read “—”.</p>
+    <p><b>The pricing sheet has four wrong opponents.</b> On four Celtics dates the pricing calendar disagrees with the package sheets: Oct 14, Dec 2 and Jan 23 are printed as Brooklyn but are Charlotte, and Mar 16 is printed as the Lakers but is Sacramento. The package sheets are right — the pricing calendar lists five home games against Brooklyn (a division rival is two) and lists the Lakers twice, as both LAL and LAK. This page uses the package sheets' opponents; the prices are unaffected, since only the labels differ.</p>
+    <p><b>NBA Cup.</b> Dec 4–11 is a single window on the Celtics sheet with eight potential home dates, flat $71.50 / $61.50 and no opponent or tip time. Both 22-game plans include exactly one Cup game in it — Plan A a semifinal, Plan B a quarterfinal — which is why each is 21 dated games plus one Cup slot. That slot is counted in the face-value totals at Cup price; selecting either plan lights the whole window, since the actual date isn't known yet. The eight rows are otherwise excluded from every total.</p>
+    <p><b>Preseason.</b> Bruins Sep 20 vs Washington and Sep 22 vs Philadelphia are preseason at $61.50 — each 22-game plan spends one of its 22 slots on one. The Celtics plans do the same: Oct 10 vs Philadelphia (Plan B) and Oct 14 vs Charlotte (Plan A), both marked preseason on the package sheets and both $61.50.</p>
     <p><b>Double headers.</b> Three dates put both teams in the building: Oct 10, Nov 27 and Dec 20. Dec 5 would be a fourth if the Celtics host an NBA Cup game that day. They're tagged <b>DH</b> in the combined view.</p>
   </div>
 
@@ -256,9 +267,17 @@ const PLANS = {
   BERG22: {team:"BRU", name:"22-Game Bergeron",     code:"P27RAFA22", cost:2662},
   BF22:   {team:"BRU", name:"22-Game Black Friday", code:"P27RAFB22", cost:2662},
   RIV10:  {team:"BRU", name:"10-Game Rivalry",      code:"P27RAFA",   cost:1310},
-  BF10:   {team:"BRU", name:"10-Game Black Friday", code:"P27RAFB",   cost:1310}
-  // Celtics plans pending — same shape, with team:"CEL".
+  BF10:   {team:"BRU", name:"10-Game Black Friday", code:"P27RAFB",   cost:1310},
+
+  // Celtics. The package sheets list games but no prices — cost stays null
+  // until the sale email numbers land, and the cost columns read "—".
+  CELA22: {team:"CEL", name:"22-Game Plan A",       code:"P27RAFAC22", cost:null, cup:"Semifinal"},
+  CELB22: {team:"CEL", name:"22-Game Plan B",       code:"P27RAFBC22", cost:null, cup:"Quarterfinal"},
+  CELRIV: {team:"CEL", name:"10-Game Rival",        code:"P27RAFA-C",  cost:null},
+  CELBF:  {team:"CEL", name:"10-Game Black Friday", code:"P27RAFB-C",  cost:null}
 };
+
+const CUP_A=71.50, CUP_B=61.50;   // flat NBA Cup price
 
 // date, weekday, opponent, start, Row A price, plans, preseason?, tbd?
 const BRUINS = [
@@ -309,17 +328,17 @@ const BRUINS = [
 ];
 
 const CELTICS = [
- ["Oct 10","Sat","PHI","8:00",61.50,[],1,0],
- ["Oct 14","Wed","BKN","7:30",61.50,[],1,0],
- ["Oct 23","Fri","NYK","7:00",226.50,[],0,0],
- ["Oct 26","Mon","CHI","7:30",71.50,[],0,0],
- ["Oct 27","Tue","BKN","7:30",71.50,[],0,0],
- ["Oct 30","Fri","CHI","7:30",106.50,[],0,0],
- ["Nov 4","Wed","MIL","7:30",71.50,[],0,0],
- ["Nov 15","Sun","DAL","6:00",136.50,[],0,0],
- ["Nov 16","Mon","ORL","7:00",71.50,[],0,0],
- ["Nov 27","Fri","ATL","8:00",136.50,[],0,0],
- ["Dec 2","Wed","BKN","7:30",71.50,[],0,0],
+ ["Oct 10","Sat","PHI","8:00",61.50,["CELB22"],1,0],
+ ["Oct 14","Wed","CHA","7:30",61.50,["CELA22"],1,0],
+ ["Oct 23","Fri","NYK","7:00",226.50,["CELB22","CELRIV"],0,0],
+ ["Oct 26","Mon","CHI","7:30",71.50,["CELA22","CELBF"],0,0],
+ ["Oct 27","Tue","BKN","7:30",71.50,["CELB22"],0,0],
+ ["Oct 30","Fri","CHI","7:30",106.50,["CELB22"],0,0],
+ ["Nov 4","Wed","MIL","7:30",71.50,["CELA22"],0,0],
+ ["Nov 15","Sun","DAL","6:00",136.50,["CELA22","CELRIV"],0,0],
+ ["Nov 16","Mon","ORL","7:00",71.50,["CELB22"],0,0],
+ ["Nov 27","Fri","ATL","8:00",136.50,["CELA22","CELBF"],0,0],
+ ["Dec 2","Wed","CHA","7:30",71.50,["CELB22","CELRIV"],0,0],
  ["Dec 4","Fri","CUP","",71.50,[],0,1],
  ["Dec 5","Sat","CUP","",71.50,[],0,1],
  ["Dec 6","Sun","CUP","",71.50,[],0,1],
@@ -328,37 +347,37 @@ const CELTICS = [
  ["Dec 9","Wed","CUP","",71.50,[],0,1],
  ["Dec 10","Thu","CUP","",71.50,[],0,1],
  ["Dec 11","Fri","CUP","",71.50,[],0,1],
- ["Dec 14","Mon","WAS","7:30",91.50,[],0,0],
- ["Dec 16","Wed","WAS","7:00",91.50,[],0,0],
- ["Dec 18","Fri","UTA","7:30",106.50,[],0,0],
- ["Dec 20","Sun","DET","8:00",106.50,[],0,0],
- ["Dec 23","Wed","POR","7:30",121.50,[],0,0],
- ["Dec 25","Fri","MIA","2:30",171.50,[],0,0],
- ["Dec 28","Mon","CLE","8:00",151.50,[],0,0],
- ["Jan 11","Mon","HOU","7:30",106.50,[],0,0],
- ["Jan 13","Wed","NYK","7:00",171.50,[],0,0],
- ["Jan 16","Sat","BKN","7:00",106.50,[],0,0],
- ["Jan 20","Wed","IND","7:30",91.50,[],0,0],
- ["Jan 21","Thu","PHI","7:30",266.50,[],0,0],
- ["Jan 23","Sat","BKN","7:00",136.50,[],0,0],
- ["Jan 25","Mon","TOR","7:00",91.50,[],0,0],
- ["Jan 27","Wed","LAC","7:30",91.50,[],0,0],
- ["Jan 29","Fri","PHX","7:30",121.50,[],0,0],
- ["Feb 2","Tue","LAL","8:00",171.50,[],0,0],
- ["Feb 9","Tue","DEN","7:30",106.50,[],0,0],
- ["Feb 10","Wed","GSW","7:30",151.50,[],0,0],
- ["Feb 12","Fri","MIN","8:00",136.50,[],0,0],
- ["Feb 14","Sun","TOR","1:00",136.50,[],0,0],
- ["Feb 26","Fri","CLE","7:30",136.50,[],0,0],
- ["Mar 7","Sun","PHI","1:00",266.50,[],0,0],
- ["Mar 11","Thu","MEM","7:30",106.50,[],0,0],
- ["Mar 12","Fri","OKC","7:30",171.50,[],0,0],
- ["Mar 16","Tue","LAK","7:30",91.50,[],0,0],
- ["Mar 18","Thu","ORL","7:30",106.50,[],0,0],
- ["Mar 21","Sun","NOP","3:00",121.50,[],0,0],
- ["Mar 24","Wed","SAS","7:30",171.50,[],0,0],
- ["Apr 2","Fri","MIA","7:30",151.50,[],0,0],
- ["Apr 11","Sun","MIL","6:00",106.50,[],0,0]
+ ["Dec 14","Mon","WAS","7:30",91.50,["CELA22","CELBF"],0,0],
+ ["Dec 16","Wed","WAS","7:00",91.50,["CELB22","CELRIV"],0,0],
+ ["Dec 18","Fri","UTA","7:30",106.50,["CELA22"],0,0],
+ ["Dec 20","Sun","DET","8:00",106.50,["CELA22"],0,0],
+ ["Dec 23","Wed","POR","7:30",121.50,["CELB22","CELBF"],0,0],
+ ["Dec 25","Fri","MIA","2:30",171.50,["CELB22","CELRIV"],0,0],
+ ["Dec 28","Mon","CLE","8:00",151.50,["CELB22"],0,0],
+ ["Jan 11","Mon","HOU","7:30",106.50,["CELA22"],0,0],
+ ["Jan 13","Wed","NYK","7:00",171.50,["CELA22","CELBF"],0,0],
+ ["Jan 16","Sat","BKN","7:00",106.50,["CELA22","CELRIV"],0,0],
+ ["Jan 20","Wed","IND","7:30",91.50,["CELB22"],0,0],
+ ["Jan 21","Thu","PHI","7:30",266.50,["CELA22"],0,0],
+ ["Jan 23","Sat","CHA","7:00",136.50,["CELB22"],0,0],
+ ["Jan 25","Mon","TOR","7:00",91.50,["CELA22"],0,0],
+ ["Jan 27","Wed","LAC","7:30",91.50,["CELB22","CELRIV"],0,0],
+ ["Jan 29","Fri","PHX","7:30",121.50,["CELA22","CELBF"],0,0],
+ ["Feb 2","Tue","LAL","8:00",171.50,["CELA22"],0,0],
+ ["Feb 9","Tue","DEN","7:30",106.50,["CELB22","CELRIV"],0,0],
+ ["Feb 10","Wed","GSW","7:30",151.50,["CELA22","CELBF"],0,0],
+ ["Feb 12","Fri","MIN","8:00",136.50,["CELA22"],0,0],
+ ["Feb 14","Sun","TOR","1:00",136.50,["CELB22","CELRIV"],0,0],
+ ["Feb 26","Fri","CLE","7:30",136.50,["CELA22"],0,0],
+ ["Mar 7","Sun","PHI","1:00",266.50,["CELB22","CELBF"],0,0],
+ ["Mar 11","Thu","MEM","7:30",106.50,["CELA22"],0,0],
+ ["Mar 12","Fri","OKC","7:30",171.50,["CELB22"],0,0],
+ ["Mar 16","Tue","SAC","7:30",91.50,["CELB22","CELBF"],0,0],
+ ["Mar 18","Thu","ORL","7:30",106.50,["CELA22"],0,0],
+ ["Mar 21","Sun","NOP","3:00",121.50,["CELB22"],0,0],
+ ["Mar 24","Wed","SAS","7:30",171.50,["CELB22","CELRIV"],0,0],
+ ["Apr 2","Fri","MIA","7:30",151.50,["CELA22"],0,0],
+ ["Apr 11","Sun","MIL","6:00",106.50,["CELB22","CELBF"],0,0],
 ];
 
 const MONTH_ORDER=["Sep","Oct","Nov","Dec","Jan","Feb","Mar","Apr"];
@@ -389,9 +408,10 @@ const plansInView = ()=> Object.entries(PLANS).filter(([,p])=>teamsInView().incl
 
 function faces(key){
   const list=G.filter(g=>!g.tbd && g.plans.includes(key));
-  return {n:list.length,
-          a:list.reduce((s,g)=>s+g.a,0),
-          b:list.reduce((s,g)=>s+g.b,0)};
+  const cup=PLANS[key].cup?1:0;
+  return {n:list.length+cup, dated:list.length, cup,
+          a:list.reduce((s,g)=>s+g.a,0)+cup*CUP_A,
+          b:list.reduce((s,g)=>s+g.b,0)+cup*CUP_B};
 }
 
 /* ---------- team switch ---------- */
@@ -422,15 +442,12 @@ function renderPlans(){
   const list=plansInView();
   if(!list.length){
     plansEl.className="";
-    plansEl.innerHTML=`<div class="pending"><b>Celtics plan packages aren't out yet.</b> `+
-      `The pricing sheet is a calendar only — no plan names, codes, costs or game lists. `+
-      `Every Celtics date is shown at face value below; the plan cards and value math `+
-      `light up as soon as the packages land.</div>`;
+    plansEl.innerHTML=`<div class="pending"><b>No packages published for this team yet.</b></div>`;
     return;
   }
   plansEl.className="plans";
   list.forEach(([key,p])=>{
-    const f=faces(key), saveA=f.a-p.cost;
+    const f=faces(key), known=p.cost!=null, saveA=f.a-p.cost;
     const btn=document.createElement("button");
     btn.className="plan "+TEAMS[p.team].cls; btn.type="button";
     btn.setAttribute("aria-pressed","false");
@@ -438,10 +455,14 @@ function renderPlans(){
     btn.innerHTML=
       `<span class="plan-kicker">${f.n} games · ${p.code}</span>`+
       `<span class="plan-name">${p.name.replace(/^\d+-Game /,"")}</span>`+
-      `<span class="plan-price">${money0(p.cost)}</span>`+
-      `<span class="plan-sub">${money(p.cost/f.n)} per game</span>`+
-      `<span class="plan-delta ${saveA>0?"pos":"neg"}">`+
-        `${saveA>0?"Saves":"Costs"} ${money(Math.abs(saveA))} vs Row A face</span>`;
+      (known
+        ? `<span class="plan-price">${money0(p.cost)}</span>`+
+          `<span class="plan-sub">${money(p.cost/f.n)} per game</span>`+
+          `<span class="plan-delta ${saveA>0?"pos":"neg"}">`+
+            `${saveA>0?"Saves":"Costs"} ${money(Math.abs(saveA))} vs Row A face</span>`
+        : `<span class="plan-price">${money0(f.a)}</span>`+
+          `<span class="plan-sub">Row A face · ${money(f.a/f.n)} per game</span>`+
+          `<span class="plan-delta tbd-cost">Plan cost not published</span>`);
     btn.addEventListener("click",()=>select(key===active?null:key));
     plansEl.appendChild(btn);
   });
@@ -463,6 +484,7 @@ function renderRibbon(){
       el.className="game "+TEAMS[g.team].cls+(g.tbd?" tbd":"");
       el.dataset.plans=g.plans.join(",");
       el.dataset.team=g.team;
+      el.dataset.tbd=g.tbd?"1":"0";
       el.innerHTML=
         `<span class="g-date">${g.day} ${g.date.split(" ")[1]}</span>`+
         `<span><span class="g-opp">${g.tbd?"NBA CUP":g.opp}</span>`+
@@ -486,20 +508,26 @@ function renderTable(){
   tb.innerHTML="";
   const list=plansInView();
   if(!list.length){
-    tb.innerHTML=`<tr><td class="empty" colspan="8">`+
-      `No Celtics packages published yet — nothing to price against face value.</td></tr>`;
+    tb.innerHTML=`<tr><td class="empty" colspan="8">No packages published for this team yet.</td></tr>`;
     return;
   }
   list.forEach(([key,p])=>{
-    const f=faces(key), dA=f.a-p.cost, dB=f.b-p.cost;
+    const f=faces(key), known=p.cost!=null, dA=f.a-p.cost, dB=f.b-p.cost;
     const pct=(d,face)=>(d/face*100).toFixed(1)+"%";
     const tr=document.createElement("tr");
     tr.className=TEAMS[p.team].cls;
+    const cost = known
+      ? `<td>${money0(p.cost)}</td><td>${money(p.cost/f.n)}</td>`
+      : `<td class="na">—</td><td class="na">—</td>`;
+    const delta = (d,face)=> known
+      ? `<td class="${d>0?"pos":"neg"}">${d>0?"−":"+"}${money(Math.abs(d))} · ${pct(Math.abs(d),face)}</td>`
+      : `<td class="na">—</td>`;
     tr.innerHTML=
-      `<td class="name">${view==="ALL"?`<span class="tteam">${p.team}</span>`:``}${p.name}</td>`+
-      `<td>${f.n}</td><td>${money0(p.cost)}</td><td>${money(p.cost/f.n)}</td>`+
-      `<td>${money(f.a)}</td><td class="${dA>0?"pos":"neg"}">${dA>0?"−":"+"}${money(Math.abs(dA))} · ${pct(Math.abs(dA),f.a)}</td>`+
-      `<td>${money(f.b)}</td><td class="${dB>0?"pos":"neg"}">${dB>0?"−":"+"}${money(Math.abs(dB))} · ${pct(Math.abs(dB),f.b)}</td>`;
+      `<td class="name">${view==="ALL"?`<span class="tteam">${p.team}</span>`:``}${p.name}`+
+        `${f.cup?`<span class="cupmark" title="includes one NBA Cup game">+cup</span>`:``}</td>`+
+      `<td>${f.n}</td>${cost}`+
+      `<td>${money(f.a)}</td>${delta(dA,f.a)}`+
+      `<td>${money(f.b)}</td>${delta(dB,f.b)}`;
     tb.appendChild(tr);
   });
 }
@@ -520,13 +548,18 @@ function select(key){
     b.setAttribute("aria-pressed", String(b.dataset.key===key)));
   document.querySelectorAll(".game").forEach(el=>{
     const inPlan = key && el.dataset.plans.split(",").includes(key);
+    const cupWindow = key && el.dataset.tbd==="1" && !!PLANS[key].cup
+                          && el.dataset.team===PLANS[key].team;
     el.classList.toggle("on", !!inPlan);
-    el.classList.toggle("off", !!key && !inPlan);
+    el.classList.toggle("maybe", !!cupWindow);
+    el.classList.toggle("off", !!key && !inPlan && !cupWindow);
   });
   if(key){
-    const f=faces(key);
-    const total=G.filter(g=>g.team===PLANS[key].team && !g.tbd).length;
-    note.textContent = `${PLANS[key].name} · ${f.n} of ${total} dates`;
+    const f=faces(key), p=PLANS[key];
+    const total=G.filter(g=>g.team===p.team && !g.tbd).length;
+    note.textContent = f.cup
+      ? `${p.name} · ${f.dated} of ${total} dates + one NBA Cup ${p.cup.toLowerCase()}`
+      : `${p.name} · ${f.dated} of ${total} dates`;
   } else {
     note.textContent = baseNote();
   }
