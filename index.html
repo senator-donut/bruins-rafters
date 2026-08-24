@@ -17,6 +17,8 @@
     --gold-dim:#8A6B15;
     --green:#3CC47C;
     --green-dim:#1E6B41;
+    --chrome:#BDB5A8;
+    --chrome-dim:#4E483F;
     --paper:#EFEBE1;
     --muted:#89837A;
     --rust:#C4553B;
@@ -37,22 +39,21 @@
   /* per-team accent tokens */
   .t-bru{--accent:var(--gold);--accent-dim:var(--gold-dim);}
   .t-cel{--accent:var(--green);--accent-dim:var(--green-dim);}
-  .wrap{--page-accent:var(--gold);}
-  .wrap.view-CEL{--page-accent:var(--green);}
+  .wrap{--page-accent:var(--chrome);}
 
   /* ---------- masthead ---------- */
-  .masthead{border-bottom:2px solid var(--page-accent);padding-bottom:18px;margin-bottom:26px;transition:border-color .2s;}
+  .masthead{border-bottom:2px solid var(--chrome-dim);padding-bottom:18px;margin-bottom:26px;}
   .eyebrow{
     font-family:'Barlow Condensed',sans-serif;
     text-transform:uppercase;letter-spacing:.22em;font-size:13px;font-weight:600;
-    color:var(--page-accent);margin:0 0 6px;transition:color .2s;
+    color:var(--page-accent);margin:0 0 6px;
   }
   h1{
     font-family:'Barlow Condensed',sans-serif;
     font-weight:700;text-transform:uppercase;letter-spacing:.01em;
     font-size:clamp(38px,8.5vw,74px);line-height:.92;margin:0;
   }
-  h1 span{color:var(--page-accent);transition:color .2s;}
+  h1 span{color:var(--page-accent);}
   .standfirst{color:var(--muted);max-width:62ch;margin:12px 0 0;font-size:14.5px;}
 
   /* ---------- team switch ---------- */
@@ -65,7 +66,10 @@
   .switch button:last-child{border-right:0;}
   .switch button:hover{color:var(--paper);}
   .switch button:focus-visible{outline:2px solid var(--page-accent);outline-offset:-2px;}
-  .switch button[aria-pressed="true"]{background:var(--panel-2);color:var(--accent,var(--gold));}
+  .switch button{--accent:var(--chrome);}
+  .switch button.t-bru{--accent:var(--gold);}
+  .switch button.t-cel{--accent:var(--green);}
+  .switch button[aria-pressed="true"]{background:var(--panel-2);color:var(--accent);}
   .switch .sw-count{
     display:block;font-family:'IBM Plex Mono',monospace;font-size:9.5px;
     letter-spacing:.08em;color:var(--muted);font-weight:400;margin-top:2px;
@@ -170,7 +174,7 @@
   th:first-child,td:first-child{text-align:left;}
   thead th{
     font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:.14em;
-    text-transform:uppercase;color:var(--muted);font-weight:500;border-bottom-color:var(--page-accent);
+    text-transform:uppercase;color:var(--muted);font-weight:500;border-bottom-color:var(--chrome-dim);
   }
   tbody tr:hover{background:var(--panel);}
   td.name{font-family:'Barlow Condensed',sans-serif;font-size:17px;letter-spacing:.03em;text-transform:uppercase;}
@@ -201,7 +205,7 @@
 </style>
 </head>
 <body>
-<div class="wrap t-bru view-BRU" id="wrap">
+<div class="wrap view-BRU" id="wrap">
 
   <header class="masthead">
     <p class="eyebrow">Rapid7 Rafters · TD Garden</p>
@@ -422,6 +426,7 @@ const switchEl=document.getElementById("switch");
   const n = G.filter(g=>!g.tbd && (k==="ALL" || g.team===k)).length;
   const b=document.createElement("button");
   b.type="button"; b.dataset.view=k;
+  b.className = TEAMS[k] ? TEAMS[k].cls : "";
   b.setAttribute("aria-pressed", String(k===view));
   b.innerHTML=`${label}<span class="sw-count">${n} dates</span>`;
   b.addEventListener("click",()=>setView(k));
@@ -430,7 +435,7 @@ const switchEl=document.getElementById("switch");
 
 function setView(k){
   view=k; active=null;
-  wrap.className = "wrap view-"+k+" "+(k==="CEL" ? "t-cel" : "t-bru");
+  wrap.className = "wrap view-"+k;
   switchEl.querySelectorAll("button").forEach(b=>
     b.setAttribute("aria-pressed", String(b.dataset.view===k)));
   renderPlans(); renderRibbon(); renderTable(); select(null);
