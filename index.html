@@ -144,7 +144,8 @@
   .game.t-cel{border-left-color:#1D3A2A;}
   .game.t-evt{border-left-color:#38342D;background:transparent;}
   /* events carry no price, so they drop the third column and read quieter */
-  .game.evt{grid-template-columns:52px minmax(0,1fr);}
+  .game.evt .g-price{color:var(--chrome);}
+  .game.evt .g-price small{text-transform:none;letter-spacing:.04em;}
   .game.evt .g-opp{
     font-family:'IBM Plex Sans',system-ui,sans-serif;
     font-size:13.5px;font-weight:500;text-transform:none;
@@ -178,6 +179,7 @@
   .tag.team{border-color:var(--accent-dim);color:var(--accent);opacity:.8;}
   .tag.dh{border-color:var(--rust);color:var(--rust);}
   .tag.nos{border-color:var(--rust);color:var(--rust);}
+  .tag.club{border-color:var(--chrome-dim);color:var(--muted);}
 
   /* ---------- value table ---------- */
   .tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
@@ -273,8 +275,9 @@
     <p><b>The pricing sheet has four wrong opponents.</b> On four Celtics dates the pricing calendar disagrees with the package sheets: Oct 14, Dec 2 and Jan 23 are printed as Brooklyn but are Charlotte, and Mar 16 is printed as the Lakers but is Sacramento. The package sheets are right, and the published NBA schedule confirms all four. The pricing calendar also convicts itself twice over — it lists five home games against Brooklyn, where a division rival is two, and it lists the Lakers twice, as both LAL and LAK. This page uses the package sheets' opponents; the prices are unaffected, since only the labels differ.</p>
     <p><b>NBA Cup.</b> Dec 4–11 is a single window on the Celtics sheet with eight potential home dates, flat $71.50 / $61.50 and no opponent or tip time. Both 22-game plans include exactly one Cup game in it — Plan A a semifinal, Plan B a quarterfinal — which is why each is 21 dated games plus one Cup slot. That slot is counted in the face-value totals at Cup price; selecting either plan lights the whole window, since the actual date isn't known yet. The eight rows are otherwise excluded from every total.</p>
     <p><b>Preseason.</b> Bruins Sep 20 vs Washington and Sep 22 vs Philadelphia are preseason at $61.50 — each 22-game plan spends one of its 22 slots on one. The Celtics plans do the same: Oct 10 vs Philadelphia (Plan B) and Oct 14 vs Charlotte (Plan A), both marked preseason on the package sheets and both $61.50.</p>
-    <p><b>Six dates you can't buy into.</b> Sep 29, Nov 8, Dec 1 and Mar 6 for the Bruins, and Oct 23 and Jan 21 for the Celtics, are tagged <b>NO SINGLES</b>: every other home date appears on the TD Garden buy page, and these six don't, which means no single-game inventory was left as of Aug 24, 2026. Both home openers are on that list, and so is Bergeron night. A plan is the only route in — and three of the six sit in the 22-Game Bergeron package, which is an argument for it that face value alone doesn't show. Inventory can come back, so treat it as a snapshot, not a verdict.</p>
-    <p><b>Concerts and shows.</b> The 36 non-team events come from the member buy listing, which carries no prices — so they're schedule only and never touch the plan math. None of them collides with a game date. They're shown in the neutral stone, without a price column, to keep them clearly separate from anything a package covers. The listing also runs past the season at both ends, which is why August appears and why the last row is Apr 12.</p>
+    <p><b>Seven marquee games are held back, not sold out.</b> Sep 29, Nov 8, Nov 27, Dec 1 and Mar 6 for the Bruins, and Oct 23 and Jan 21 for the Celtics, are tagged <b>ON SALE LATER</b>: they were deliberately withheld from the general individual on-sale. The Bruins notice named the Black Friday game and Bergeron night and said those release in late August; the Celtics notice named Opening Night and Jan 21 and said mid-September. Both home openers and Bergeron night are on the list, and three of the seven sit in the 22-Game Bergeron package. As of Aug 24 none had appeared yet, so a plan is still the only committed route in.</p>
+    <p><b>Concerts and shows.</b> Every one of the 36 non-team events is priced here from its Rafters on-sale email. Those prices are all-in — fees included, shown upfront — which is not the same basis as the game prices above, so don't read the two columns as directly comparable. Prices run from $56.50 (Smashing Pumpkins, John Summit) to $206.50 for the three Olivia Rodrigo nights. None of the 36 collides with a game date.</p>
+    <p><b>Five nights the Rafters are closed.</b> KATSEYE on Oct 28, Comics Come Home on Nov 7, Il Volo on Nov 19 and both Professional Bull Riders dates on Jan 2–3 are tagged <b>RAFTERS CLOSED</b> — your seats aren't available for those events at all, and the listed price is the Club Seat alternative TD Garden offered instead.</p>
     <p><b>Double headers.</b> Three dates put both teams in the building: Oct 10, Nov 27 and Dec 20. Dec 5 would be a fourth if the Celtics host an NBA Cup game that day. They're tagged <b>DH</b> in the combined view.</p>
   </div>
 
@@ -404,55 +407,57 @@ const CELTICS = [
  ["Apr 11","Sun","MIL","6:00",106.50,["CELB22","CELBF"],0,0],
 ];
 
-/* Concerts, shows and other TD Garden events, from the member buy listing.
-   The listing carries no prices, so these never enter the plan value math. */
+/* Concerts, shows and other TD Garden events, with the Rafters price from the
+   member on-sale emails. club:1 means Rafters is closed for that event and the
+   price is the Club Seat price instead. Event prices are all-in (fees included). */
 const EVENTS = [
- ["Aug 28","Fri","Kacey Musgraves","7:30"],
- ["Sep 5","Sat","Don Toliver","7:30"],
- ["Sep 9","Wed","Iron Maiden","7:20"],
- ["Sep 12","Sat","RUSH","7:30"],
- ["Sep 14","Mon","RUSH","7:30"],
- ["Sep 19","Sat","Mt. Joy","8:00"],
- ["Sep 24","Thu","Charli xcx","8:00"],
- ["Sep 25","Fri","Jonas Brothers","7:30"],
- ["Sep 26","Sat","Don Omar","8:00"],
- ["Sep 27","Sun","Weezer","7:00"],
- ["Oct 1","Thu","Gorillaz","7:30"],
- ["Oct 2","Fri","Smashing Pumpkins","8:00"],
- ["Oct 3","Sat","beabadoobee","8:00"],
- ["Oct 6","Tue","Phoebe Bridgers","7:30"],
- ["Oct 7","Wed","Phoebe Bridgers","7:30"],
- ["Oct 9","Fri","Teddy Swims","7:00"],
- ["Oct 13","Tue","Johnny Blue Skies","8:00"],
- ["Oct 15","Thu","Olivia Rodrigo","7:00"],
- ["Oct 17","Sat","Olivia Rodrigo","7:00"],
- ["Oct 18","Sun","Olivia Rodrigo","7:00"],
- ["Oct 25","Sun","Rod Wave","8:00"],
- ["Oct 28","Wed","Katseye","8:00"],
- ["Oct 29","Thu","John Summit","7:00"],
- ["Nov 3","Tue","Disney Worlds Collide","7:00"],
- ["Nov 6","Fri","UCONN","7:00"],
- ["Nov 7","Sat","Comics Come Home","8:00"],
- ["Nov 10","Tue","Journey","7:30"],
- ["Nov 18","Wed","Sombr","7:00"],
- ["Nov 19","Thu","Il Volo","8:00"],
- ["Nov 23","Mon","Doja Cat","7:30"],
- ["Dec 10","Thu","Andrea Bocelli","8:00"],
- ["Jan 2","Sat","Professional Bull Riders","7:45"],
- ["Jan 3","Sun","Professional Bull Riders","1:45"],
- ["Mar 1","Mon","Gracie Abrams","8:00"],
- ["Mar 2","Tue","Gracie Abrams","8:00"],
- ["Apr 12","Mon","Niall Horan","7:30"],
+ ["Aug 28","Fri","Kacey Musgraves","7:30",66.50,0],
+ ["Sep 5","Sat","Don Toliver","7:30",76.50,0],
+ ["Sep 9","Wed","Iron Maiden","7:20",91.50,0],
+ ["Sep 12","Sat","RUSH","7:30",106.50,0],
+ ["Sep 14","Mon","RUSH","7:30",106.50,0],
+ ["Sep 19","Sat","Mt. Joy","8:00",76.50,0],
+ ["Sep 24","Thu","Charli xcx","8:00",91.50,0],
+ ["Sep 25","Fri","Jonas Brothers","7:30",131.50,0],
+ ["Sep 26","Sat","Don Omar","8:00",81.50,0],
+ ["Sep 27","Sun","Weezer","7:00",81.50,0],
+ ["Oct 1","Thu","Gorillaz","7:30",71.50,0],
+ ["Oct 2","Fri","Smashing Pumpkins","8:00",56.50,0],
+ ["Oct 3","Sat","beabadoobee","8:00",71.50,0],
+ ["Oct 6","Tue","Phoebe Bridgers","7:30",86.50,0],
+ ["Oct 7","Wed","Phoebe Bridgers","7:30",86.50,0],
+ ["Oct 9","Fri","Teddy Swims","7:00",86.50,0],
+ ["Oct 13","Tue","Johnny Blue Skies","8:00",71.50,0],
+ ["Oct 15","Thu","Olivia Rodrigo","7:00",206.50,0],
+ ["Oct 17","Sat","Olivia Rodrigo","7:00",206.50,0],
+ ["Oct 18","Sun","Olivia Rodrigo","7:00",206.50,0],
+ ["Oct 25","Sun","Rod Wave","8:00",71.50,0],
+ ["Oct 28","Wed","Katseye","8:00",186.00,1],
+ ["Oct 29","Thu","John Summit","7:00",56.50,0],
+ ["Nov 3","Tue","Disney Worlds Collide","7:00",71.50,0],
+ ["Nov 6","Fri","UCONN","7:00",116.50,0],
+ ["Nov 7","Sat","Comics Come Home","8:00",156.50,1],
+ ["Nov 10","Tue","Journey","7:30",156.50,0],
+ ["Nov 18","Wed","Sombr","7:00",81.50,0],
+ ["Nov 19","Thu","Il Volo","8:00",92.50,1],
+ ["Nov 23","Mon","Doja Cat","7:30",81.50,0],
+ ["Dec 10","Thu","Andrea Bocelli","8:00",106.50,0],
+ ["Jan 2","Sat","Professional Bull Riders","7:45",145.50,1],
+ ["Jan 3","Sun","Professional Bull Riders","1:45",145.50,1],
+ ["Mar 1","Mon","Gracie Abrams","8:00",181.50,0],
+ ["Mar 2","Tue","Gracie Abrams","8:00",181.50,0],
+ ["Apr 12","Mon","Niall Horan","7:30",71.50,0],
 ];
 
 const MONTH_ORDER=["Aug","Sep","Oct","Nov","Dec","Jan","Feb","Mar","Apr"];
 const MONTH_FULL={Aug:"August",Sep:"September",Oct:"October",Nov:"November",Dec:"December",
                   Jan:"January",Feb:"February",Mar:"March",Apr:"April"};
 
-/* Home dates absent from the TD Garden buy listing of Aug 24, 2026 — no
-   single-game inventory, so a plan is the only way in. */
+/* Marquee games held out of the general individual on-sale. The Bruins notice
+   named the Black Friday game and Bergeron night, releasing them "late August";
+   the Celtics notice named Opening Night and Jan 21, "mid-September". */
 const NO_SINGLES = new Set([
-  "BRU Sep 29","BRU Nov 8","BRU Dec 1","BRU Mar 6",
+  "BRU Sep 29","BRU Nov 8","BRU Nov 27","BRU Dec 1","BRU Mar 6",
   "CEL Oct 23","CEL Jan 21"
 ]);
 
@@ -468,7 +473,7 @@ const clock = t=>{ if(!t) return 0; const [h,m]=t.split(":").map(Number); return
 
 const mkEvent = r=>({
   team:"EVT", date:r[0], day:r[1], name:r[2], time:r[3],
-  plans:[], pre:0, tbd:0, nos:0, key:dayKey(r[0])
+  a:r[4], club:r[5], plans:[], pre:0, tbd:0, nos:0, key:dayKey(r[0])
 });
 
 const G = [...BRUINS.map(mk("BRU")), ...CELTICS.map(mk("CEL")), ...EVENTS.map(mkEvent)]
@@ -529,9 +534,10 @@ function renderPlans(){
     plansEl.className="";
     plansEl.innerHTML= view==="EVT"
       ? `<div class="pending"><b>Concerts and shows are sold ticket by ticket.</b> `+
-        `No Rafters package covers them, and the buy listing carries no prices, `+
-        `so there's nothing to weigh against face value here — these dates are `+
-        `included to show what else lands in your seats across the year.</div>`
+        `No Rafters package covers them, so there's nothing to weigh against face `+
+        `value — but each carries its Rafters price from the on-sale email. Those `+
+        `prices are all-in, fees included, unlike the game prices elsewhere on this `+
+        `page. Five dates show a Club Seat price because the Rafters are closed.</div>`
       : `<div class="pending"><b>No packages published for this team yet.</b></div>`;
     return;
   }
@@ -582,12 +588,15 @@ function renderRibbon(){
           (view==="ALL"&&!evt?`<span class="tag team">${g.team}</span>`:``)+
           (g.tbd?`<span class="tag cup">TBD</span>`:``)+
           (g.pre?`<span class="tag pre">PRE</span>`:``)+
-          (g.nos?`<span class="tag nos" title="Not listed on the TD Garden buy page — no single-game tickets available">NO SINGLES</span>`:``)+
+          (g.nos?`<span class="tag nos" title="Held out of the general individual on-sale; released separately">ON SALE LATER</span>`:``)+
+          (evt&&g.club?`<span class="tag club" title="Rapid7 Rafters is closed for this event">RAFTERS CLOSED</span>`:``)+
           (g.team==="BRU"&&g.opp==="COL"?`<span class="tag">37</span>`:``)+
           (view==="ALL"&&DH.has(g.date)?`<span class="tag dh">DH</span>`:``)+
           (g.time?`<span class="g-time">${g.time}</span>`:``)+
         `</span>`+
-        (evt?``:`<span class="g-price">${money(g.a)}<small>${money(g.b)}</small></span>`);
+        (evt
+          ? `<span class="g-price">${money(g.a)}<small>${g.club?"club seat":"rafters"}</small></span>`
+          : `<span class="g-price">${money(g.a)}<small>${money(g.b)}</small></span>`);
       box.appendChild(el);
     });
     col.appendChild(box); monthsEl.appendChild(col);
@@ -635,7 +644,10 @@ function baseNote(){
     const shows=vis.filter(g=>g.team==="EVT").length;
     return `${real-shows} home dates · ${shows} shows · ${DH.size} double headers · ${tbd} NBA Cup TBD`;
   }
-  if(view==="EVT") return `${real} concerts and shows · no plan pricing`;
+  if(view==="EVT"){
+    const shut=vis.filter(g=>g.club).length;
+    return `${real} concerts and shows · ${shut} with the Rafters closed`;
+  }
   return tbd ? `${real} home dates · ${tbd} NBA Cup TBD` : `${real} home dates`;
 }
 function select(key){
