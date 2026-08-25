@@ -97,6 +97,10 @@
   }
   .sortby{flex:none;}
   .sortby button{border-right:1px solid var(--line);}
+  .sortby button:last-child{border-right:0;}
+  .sortby button:hover{color:var(--paper);}
+  .sortby button:focus-visible{outline:2px solid var(--page-accent);outline-offset:-2px;}
+  .sortby button[aria-pressed="true"]{background:var(--panel-2);color:var(--paper);}
   .collapse{border:1px solid var(--line);border-radius:3px;margin-left:12px;}
   .collapse:hover{color:var(--paper);}
   .collapse:focus-visible{outline:2px solid var(--page-accent);outline-offset:-2px;}
@@ -123,11 +127,6 @@
     .fsep{display:none;}            /* orphans at the end of a wrapped row */
     .fnote{width:100%;margin-left:0;}
   }
-  .sortby button:last-child{border-right:0;}
-  .sortby button:hover{color:var(--paper);}
-  .sortby button:focus-visible{outline:2px solid var(--page-accent);outline-offset:-2px;}
-  .sortby button[aria-pressed="true"]{background:var(--panel-2);color:var(--paper);}
-
   /* ---------- plan cards ---------- */
   .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:10px;}
   .plan{
