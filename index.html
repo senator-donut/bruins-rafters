@@ -225,11 +225,15 @@
   @media (max-width:520px){
     .game{grid-template-columns:46px minmax(0,1fr) auto;padding:6px 7px;gap:7px;}
     .g-opp{font-size:17px;}
-    /* four buttons no longer fit on one line — stack them 2x2 */
+    /* the buttons no longer fit on one line — two per row, odd one spans */
     .switch{display:grid;grid-template-columns:1fr 1fr;width:100%;}
-    .switch button{padding:8px 13px;font-size:13px;border-right:1px solid var(--line);}
+    .switch button{
+      padding:8px 13px;font-size:13px;
+      border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+    }
     .switch button:nth-child(2n){border-right:0;}
-    .switch button:nth-child(-n+2){border-bottom:1px solid var(--line);}
+    .switch button:last-child{border-bottom:0;}
+    .switch button:last-child:nth-child(2n+1){grid-column:1/-1;border-right:0;}
   }
   @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
 </style>
@@ -284,14 +288,14 @@
     <p><b>Row A vs Rows B.</b> Both pricing sheets list two tiers per game — Row A (front of the balcony) runs $10 more than every other row. Plan pricing is a single number, so which tier you actually get changes the discount a lot.</p>
     <p><b>Bergeron Night.</b> Patrice Bergeron's No. 37 goes up before the Dec 1 Bruins game vs Colorado — the most expensive date on either sheet at $326.50. It appears in the 22-Game Bergeron package only. The sale email says the 22-Game Plan guarantees access to the ceremony, but the 22-Game Black Friday game list doesn't include Dec 1. Worth pinning down with the rep before you buy.</p>
     <p><b>Celtics plan pricing is flat per plan size.</b> $2,376 buys either 22-game plan and $1,180 buys either 10-game plan, so the two plans at each size cost the same but hold different games — Plan B's slate is $30 richer at face value than Plan A's, and the 10-Game Black Friday's is $20 richer than the Rival's. At those prices every Celtics plan beats face value in both tiers, which is not true on the Bruins side.</p>
-    <p><b>The “up to 14%” claim.</b> The Celtics plan sheet advertises savings of up to 14% over single-game pricing. Measured on ticket face value alone the best any plan does is 12.3% — Plan B against Row A. The sheet also lists waived service fees as a separate benefit, and those aren't in the face numbers here, so they're the likely difference. Ask what fee the 14% assumes.</p>
+    <p><b>The “up to 14%” claim.</b> The Celtics plan sheet advertises savings of up to 14% over single-game pricing. The best any plan does here is 12.3% — Plan B against Row A — and waived service fees can't be the difference, because the $6.50 fee is already inside every single-game price on this page, so the savings math already credits the waiver. Stripping fees out of both sides makes it worse, not better: 7.4%. Worth asking the rep what the 14% is measured against.</p>
     <p><b>The pricing sheet has four wrong opponents.</b> On four Celtics dates the pricing calendar disagrees with the package sheets: Oct 14, Dec 2 and Jan 23 are printed as Brooklyn but are Charlotte, and Mar 16 is printed as the Lakers but is Sacramento. The package sheets are right, and the published NBA schedule confirms all four. The pricing calendar also convicts itself twice over — it lists five home games against Brooklyn, where a division rival is two, and it lists the Lakers twice, as both LAL and LAK. This page uses the package sheets' opponents; the prices are unaffected, since only the labels differ.</p>
     <p><b>NBA Cup.</b> Dec 4–11 is a single window on the Celtics sheet with eight potential home dates, flat $71.50 / $61.50 and no opponent or tip time. Both 22-game plans include exactly one Cup game in it — Plan A a semifinal, Plan B a quarterfinal — which is why each is 21 dated games plus one Cup slot. That slot is counted in the face-value totals at Cup price; selecting either plan lights the whole window, since the actual date isn't known yet. The eight rows are otherwise excluded from every total.</p>
     <p><b>Preseason.</b> Bruins Sep 20 vs Washington and Sep 22 vs Philadelphia are preseason at $61.50 — each 22-game plan spends one of its 22 slots on one. The Celtics plans do the same: Oct 10 vs Philadelphia (Plan B) and Oct 14 vs Charlotte (Plan A), both marked preseason on the package sheets and both $61.50.</p>
     <p><b>Seven marquee games are held back, not sold out.</b> Sep 29, Nov 8, Nov 27, Dec 1 and Mar 6 for the Bruins, and Oct 23 and Jan 21 for the Celtics, are tagged <b>ON SALE LATER</b>: they were deliberately withheld from the general individual on-sale. The Bruins notice named the Black Friday game and Bergeron night and said those release in late August; the Celtics notice named Opening Night and Jan 21 and said mid-September. Both home openers and Bergeron night are on the list, and three of the seven sit in the 22-Game Bergeron package. As of Aug 24 none had appeared yet, so a plan is still the only committed route in.</p>
-    <p><b>Concerts and shows.</b> Every one of the 36 non-team events is priced here from its Rafters on-sale email. Those prices are all-in — fees included, shown upfront — which is not the same basis as the game prices above. That matters most when you sort by price: a concert and a game landing in the same band aren't strictly like for like, and the small label under each price says which basis it's on. Prices run from $56.50 (Smashing Pumpkins, John Summit) to $206.50 for the three Olivia Rodrigo nights. None of the 36 collides with a game date.</p>
+    <p><b>Concerts and shows.</b> Every one of the 36 non-team events is priced here from its Rafters on-sale email. Those prices are all-in, and so are the game prices — every Rafters price on this page is a round face value plus a flat $6.50 per-ticket fee, confirmed against a checkout screen for Oct 31 that broke $126.50 into $120.00 face and $6.50 fees. Subtracting $6.50 lands all 30 distinct game prices and all 13 Rafters event prices on a round $5 face, which is why everything here ends in .50. Games and shows are therefore directly comparable, including in the by-price sort. Club Seat prices are the exception and don't follow the pattern. Prices run from $56.50 (Smashing Pumpkins, John Summit) to $206.50 for the three Olivia Rodrigo nights. None of the 36 collides with a game date.</p>
     <p><b>Five nights the Rafters are closed.</b> KATSEYE on Oct 28, Comics Come Home on Nov 7, Il Volo on Nov 19 and both Professional Bull Riders dates on Jan 2–3 are tagged <b>RAFTERS CLOSED</b> — your seats aren't available for those events at all, and the listed price is the Club Seat alternative TD Garden offered instead.</p>
-    <p><b>Double headers.</b> Three dates put both teams in the building: Oct 10, Nov 27 and Dec 20. Dec 5 would be a fourth if the Celtics host an NBA Cup game that day. They're tagged <b>DH</b> in the combined view.</p>
+    <p><b>Double headers.</b> Three dates put both teams in the building: Oct 10, Nov 27 and Dec 20. Dec 5 would be a fourth if the Celtics host an NBA Cup game that day. They're tagged <b>DH</b> whenever both teams are on screen.</p>
   </div>
 
 </div>
@@ -514,7 +518,16 @@ const BANDS=[
   {lo:0,   label:"Under $85"}
 ];
 
-const teamsInView = ()=> view==="ALL" ? ["BRU","CEL","EVT"] : [view];
+const VIEWS = {
+  ALL:   ["BRU","CEL","EVT"],   // everything at the Garden
+  GAMES: ["BRU","CEL"],         // both teams, no concerts
+  BRU:   ["BRU"],
+  CEL:   ["CEL"],
+  EVT:   ["EVT"]
+};
+const teamsInView = ()=> VIEWS[view];
+/* team badges and DH tags only earn their place when both teams are on screen */
+const multiTeam = ()=> teamsInView().filter(t=>t!=="EVT").length>1;
 const gamesInView = ()=> G.filter(g=>teamsInView().includes(g.team));
 const plansInView = ()=> Object.entries(PLANS).filter(([,p])=>teamsInView().includes(p.team));
 
@@ -529,9 +542,9 @@ function faces(key){
 /* ---------- team switch ---------- */
 const wrap=document.getElementById("wrap");
 const switchEl=document.getElementById("switch");
-[["ALL","Combined"],["BRU","Bruins"],["CEL","Celtics"],["EVT","Events"]].forEach(([k,label])=>{
-  const n = G.filter(g=>!g.tbd && (k==="ALL" || g.team===k)).length;
-  const noun = k==="ALL" ? "events" : k==="EVT" ? "shows" : "dates";
+[["ALL","Combined"],["GAMES","Games"],["BRU","Bruins"],["CEL","Celtics"],["EVT","Events"]].forEach(([k,label])=>{
+  const n = G.filter(g=>!g.tbd && VIEWS[k].includes(g.team)).length;
+  const noun = k==="EVT" ? "shows" : k==="ALL" ? "events" : "dates";
   const b=document.createElement("button");
   b.type="button"; b.dataset.view=k;
   b.className = TEAMS[k] ? TEAMS[k].cls : "";
@@ -617,13 +630,13 @@ function gameRow(g){
   el.innerHTML=
     `<span class="g-date">${when}</span>`+
     `<span class="g-meta"><span class="g-opp">${evt?g.name:(g.tbd?"NBA CUP":g.opp)}</span>`+
-      (view==="ALL"&&!evt?`<span class="tag team">${g.team}</span>`:``)+
+      (multiTeam()&&!evt?`<span class="tag team">${g.team}</span>`:``)+
       (g.tbd?`<span class="tag cup">TBD</span>`:``)+
       (g.pre?`<span class="tag pre">PRE</span>`:``)+
       (g.nos?`<span class="tag nos" title="Held out of the general individual on-sale; released separately">ON SALE LATER</span>`:``)+
       (evt&&g.club?`<span class="tag club" title="Rapid7 Rafters is closed for this event">RAFTERS CLOSED</span>`:``)+
       (g.team==="BRU"&&g.opp==="COL"?`<span class="tag">37</span>`:``)+
-      (view==="ALL"&&DH.has(g.date)?`<span class="tag dh">DH</span>`:``)+
+      (multiTeam()&&DH.has(g.date)?`<span class="tag dh">DH</span>`:``)+
       (g.time?`<span class="g-time">${g.time}</span>`:``)+
     `</span>`+
     (evt
@@ -682,7 +695,7 @@ function renderTable(){
       ? `<td class="${d>0?"pos":"neg"}">${d>0?"−":"+"}${money(Math.abs(d))} · ${pct(Math.abs(d),face)}</td>`
       : `<td class="na">—</td>`;
     tr.innerHTML=
-      `<td class="name">${view==="ALL"?`<span class="tteam">${p.team}</span>`:``}${p.name}`+
+      `<td class="name">${multiTeam()?`<span class="tteam">${p.team}</span>`:``}${p.name}`+
         `${f.cup?`<span class="cupmark" title="includes one NBA Cup game">+cup</span>`:``}</td>`+
       `<td>${f.n}</td>${cost}`+
       `<td>${money(f.a)}</td>${delta(dA,f.a)}`+
@@ -696,9 +709,10 @@ const note=document.getElementById("ribbonNote");
 function baseNote(){
   const vis=gamesInView();
   const real=vis.filter(g=>!g.tbd).length, tbd=vis.length-real;
-  if(view==="ALL"){
+  if(view==="ALL"||view==="GAMES"){
     const shows=vis.filter(g=>g.team==="EVT").length;
-    return `${real-shows} home dates · ${shows} shows · ${DH.size} double headers · ${tbd} NBA Cup TBD`;
+    return `${real-shows} home dates`+(shows?` · ${shows} shows`:``)+
+           ` · ${DH.size} double headers · ${tbd} NBA Cup TBD`;
   }
   if(view==="EVT"){
     const shut=vis.filter(g=>g.club).length;
