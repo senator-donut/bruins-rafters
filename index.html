@@ -80,7 +80,7 @@
   /* ---------- section headers ---------- */
   .sec{margin-top:44px;}
   .sec-hd{
-    display:flex;align-items:baseline;gap:12px;
+    display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
     border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:18px;
   }
   .sec-hd h2{
@@ -90,17 +90,39 @@
   .sec-hd .note{color:var(--muted);font-size:12.5px;text-align:right;}
   .sec-hd > :nth-child(2){margin-left:auto;}
   .sortby{display:flex;gap:0;border:1px solid var(--line);border-radius:3px;overflow:hidden;}
-  .sortby button,.collapse{
+  .sortby button,.collapse,.fchip{
     font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.1em;
-    text-transform:uppercase;padding:4px 10px;border:0;
+    text-transform:uppercase;padding:4px 10px;border:0;white-space:nowrap;
     background:transparent;color:var(--muted);cursor:pointer;transition:background .15s,color .15s;
   }
+  .sortby{flex:none;}
   .sortby button{border-right:1px solid var(--line);}
   .collapse{border:1px solid var(--line);border-radius:3px;margin-left:12px;}
   .collapse:hover{color:var(--paper);}
   .collapse:focus-visible{outline:2px solid var(--page-accent);outline-offset:-2px;}
   .sec.collapsed .sec-body{display:none;}
   .sec.collapsed .sec-hd{border-bottom-color:transparent;margin-bottom:0;}
+
+  /* ---------- filters ---------- */
+  .filters{display:flex;flex-direction:column;gap:8px;margin:0 0 20px;}
+  .frow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;}
+  .flabel{
+    font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;
+    letter-spacing:.18em;font-size:11px;color:var(--muted);width:52px;flex:none;
+  }
+  .fchip{border:1px solid var(--line);border-radius:3px;}
+  .fchip:hover{color:var(--paper);}
+  .fchip:focus-visible{outline:2px solid var(--page-accent);outline-offset:1px;}
+  .fchip[aria-pressed="true"]{background:var(--panel-2);color:var(--paper);border-color:var(--chrome-dim);}
+  .fchip.preset[aria-pressed="true"]{color:var(--page-accent);border-color:var(--page-accent);}
+  .fsep{width:1px;align-self:stretch;background:var(--line);margin:0 6px;}
+  .empty-ribbon{color:var(--muted);font-size:13.5px;padding:6px 0;}
+  .fnote{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);margin-left:6px;}
+  @media (max-width:620px){
+    .flabel{width:100%;}
+    .fsep{display:none;}            /* orphans at the end of a wrapped row */
+    .fnote{width:100%;margin-left:0;}
+  }
   .sortby button:last-child{border-right:0;}
   .sortby button:hover{color:var(--paper);}
   .sortby button:focus-visible{outline:2px solid var(--page-accent);outline-offset:-2px;}
@@ -270,6 +292,7 @@
       <span class="sortby" id="sortby" role="group" aria-label="Sort the season"></span>
       <span class="note" id="ribbonNote"></span>
     </div>
+    <div class="filters" id="filters" role="group" aria-label="Filter the season"></div>
     <div class="months" id="months"></div>
   </section>
 
@@ -535,9 +558,26 @@ const VIEWS = {
   EVT:   ["EVT"]
 };
 const teamsInView = ()=> VIEWS[view];
+
+/* Nothing at the Garden starts between 5:00 and 6:00, so a 5:00-inclusive
+   cutoff splits day from night without straddling anything. */
+const DOWS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const WEEKEND=["Fri","Sat","Sun"];
+const DAY_CUTOFF=17*60;
+const dows=new Set(DOWS);
+const starts=new Set(["day","night"]);
+const dayNight = g=> clock(g.time)<=DAY_CUTOFF ? "day" : "night";
+const filtering = ()=> dows.size<DOWS.length || starts.size<2;
+function passes(g){
+  if(!dows.has(g.day)) return false;
+  if(starts.size===2) return true;
+  /* an NBA Cup placeholder has no start time, so it can't satisfy a time filter */
+  return g.time ? starts.has(dayNight(g)) : false;
+}
 /* team badges and DH tags only earn their place when both teams are on screen */
 const multiTeam = ()=> teamsInView().filter(t=>t!=="EVT").length>1;
-const gamesInView = ()=> G.filter(g=>teamsInView().includes(g.team));
+const rawInView   = ()=> G.filter(g=>teamsInView().includes(g.team));
+const gamesInView = ()=> rawInView().filter(passes);
 const plansInView = ()=> Object.entries(PLANS).filter(([,p])=>teamsInView().includes(p.team));
 
 function faces(key){
@@ -587,6 +627,52 @@ document.querySelectorAll(".collapse").forEach(btn=>{
   });
 });
 
+const filtersEl=document.getElementById("filters");
+function chip(label,pressed,cls,onClick,title){
+  const b=document.createElement("button");
+  b.type="button"; b.className="fchip"+(cls?" "+cls:"");
+  b.textContent=label; b.setAttribute("aria-pressed",String(pressed));
+  if(title) b.title=title;
+  b.addEventListener("click",onClick);
+  return b;
+}
+function renderFilters(){
+  filtersEl.innerHTML="";
+  const isWeekend = dows.size===3 && WEEKEND.every(d=>dows.has(d));
+
+  const r1=document.createElement("div"); r1.className="frow";
+  r1.innerHTML='<span class="flabel">Days</span>';
+  DOWS.forEach(d=>r1.appendChild(chip(d, dows.has(d), null, ()=>{
+    dows.has(d) ? dows.delete(d) : dows.add(d);
+    apply();
+  })));
+  const sep=document.createElement("span"); sep.className="fsep"; r1.appendChild(sep);
+  r1.appendChild(chip("Weekend", isWeekend, "preset", ()=>{
+    dows.clear();
+    (isWeekend ? DOWS : WEEKEND).forEach(d=>dows.add(d));
+    apply();
+  }, "Friday, Saturday and Sunday"));
+  r1.appendChild(chip("All", !filtering(), "preset", ()=>{
+    dows.clear(); DOWS.forEach(d=>dows.add(d));
+    starts.clear(); ["day","night"].forEach(t=>starts.add(t));
+    apply();
+  }, "Clear every filter"));
+  filtersEl.appendChild(r1);
+
+  const r2=document.createElement("div"); r2.className="frow";
+  r2.innerHTML='<span class="flabel">Start</span>';
+  [["day","Day"],["night","Night"]].forEach(([k,label])=>
+    r2.appendChild(chip(label, starts.has(k), null, ()=>{
+      starts.has(k) ? starts.delete(k) : starts.add(k);
+      apply();
+    })));
+  const cut=document.createElement("span"); cut.className="fnote";
+  cut.textContent="day = 12:00 to 5:00 · night = 6:00 and later";
+  r2.appendChild(cut);
+  filtersEl.appendChild(r2);
+}
+function apply(){ renderFilters(); renderRibbon(); select(active); }
+
 const sortEl=document.getElementById("sortby");
 [["date","By date"],["price","By price"]].forEach(([k,label])=>{
   const b=document.createElement("button");
@@ -606,7 +692,7 @@ function setView(k){
   wrap.className = "wrap view-"+k;
   switchEl.querySelectorAll("button").forEach(b=>
     b.setAttribute("aria-pressed", String(b.dataset.view===k)));
-  renderPlans(); renderRibbon(); renderTable(); select(null);
+  renderPlans(); renderFilters(); renderRibbon(); renderTable(); select(null);
 }
 
 /* ---------- plan cards ---------- */
@@ -691,6 +777,10 @@ function renderRibbon(){
   monthsEl.innerHTML="";
   monthsEl.classList.toggle("by-price", sortBy==="price");
   const vis=gamesInView();
+  if(!vis.length){
+    monthsEl.innerHTML='<p class="empty-ribbon">No dates match these filters.</p>';
+    return;
+  }
   if(sortBy==="date"){
     MONTH_ORDER.forEach(m=>{
       const list=vis.filter(g=>g.date.startsWith(m+" "));
@@ -742,6 +832,7 @@ function renderTable(){
 const note=document.getElementById("ribbonNote");
 function baseNote(){
   const vis=gamesInView();
+  if(filtering()) return `showing ${vis.length} of ${rawInView().length}`;
   const real=vis.filter(g=>!g.tbd).length, tbd=vis.length-real;
   if(view==="ALL"||view==="GAMES"){
     const shows=vis.filter(g=>g.team==="EVT").length;
@@ -769,14 +860,20 @@ function select(key){
   if(key){
     const f=faces(key), p=PLANS[key];
     const total=G.filter(g=>g.team===p.team && !g.tbd).length;
-    note.textContent = f.cup
+    const head = f.cup
       ? `${p.name} · ${f.dated} of ${total} dates + one NBA Cup ${p.cup.toLowerCase()}`
       : `${p.name} · ${f.dated} of ${total} dates`;
+    /* with a filter on, the useful number is how much of the plan survives it */
+    const kept = filtering()
+      ? G.filter(g=>!g.tbd && g.plans.includes(key) && passes(g)).length
+      : null;
+    note.textContent = kept===null ? head : `${p.name} · ${kept} of ${f.dated} dates match these filters`;
   } else {
     note.textContent = baseNote();
   }
 }
 
+renderFilters();
 setView("ALL");
 </script>
 </body>
