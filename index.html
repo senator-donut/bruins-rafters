@@ -561,7 +561,11 @@ const teamsInView = ()=> VIEWS[view];
 /* Nothing at the Garden starts between 5:00 and 6:00, so a 5:00-inclusive
    cutoff splits day from night without straddling anything. */
 const DOWS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-const WEEKEND=["Fri","Sat","Sun"];
+/* the two presets partition the week, so selecting both is the same as All */
+const PRESETS=[
+  {label:"Weeknights", days:["Mon","Tue","Wed","Thu"], tip:"Monday through Thursday"},
+  {label:"Weekend",    days:["Fri","Sat","Sun"],       tip:"Friday, Saturday and Sunday"}
+];
 const DAY_CUTOFF=17*60;
 const dows=new Set(DOWS);
 const starts=new Set(["day","night"]);
@@ -637,7 +641,7 @@ function chip(label,pressed,cls,onClick,title){
 }
 function renderFilters(){
   filtersEl.innerHTML="";
-  const isWeekend = dows.size===3 && WEEKEND.every(d=>dows.has(d));
+  const active = p => dows.size===p.days.length && p.days.every(d=>dows.has(d));
 
   const r1=document.createElement("div"); r1.className="frow";
   r1.innerHTML='<span class="flabel">Days</span>';
@@ -646,11 +650,12 @@ function renderFilters(){
     apply();
   })));
   const sep=document.createElement("span"); sep.className="fsep"; r1.appendChild(sep);
-  r1.appendChild(chip("Weekend", isWeekend, "preset", ()=>{
+  PRESETS.forEach(pre=>r1.appendChild(chip(pre.label, active(pre), "preset", ()=>{
+    const on=active(pre);
     dows.clear();
-    (isWeekend ? DOWS : WEEKEND).forEach(d=>dows.add(d));
+    (on ? DOWS : pre.days).forEach(d=>dows.add(d));   /* clicking an active preset restores every day */
     apply();
-  }, "Friday, Saturday and Sunday"));
+  }, pre.tip)));
   r1.appendChild(chip("All", !filtering(), "preset", ()=>{
     dows.clear(); DOWS.forEach(d=>dows.add(d));
     starts.clear(); ["day","night"].forEach(t=>starts.add(t));
