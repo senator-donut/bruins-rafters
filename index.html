@@ -88,12 +88,19 @@
     letter-spacing:.12em;font-size:19px;font-weight:600;margin:0;
   }
   .sec-hd .note{color:var(--muted);font-size:12.5px;text-align:right;}
-  .sortby{display:flex;gap:0;margin-left:auto;border:1px solid var(--line);border-radius:3px;overflow:hidden;}
-  .sortby button{
+  .sec-hd > :nth-child(2){margin-left:auto;}
+  .sortby{display:flex;gap:0;border:1px solid var(--line);border-radius:3px;overflow:hidden;}
+  .sortby button,.collapse{
     font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.1em;
-    text-transform:uppercase;padding:4px 10px;border:0;border-right:1px solid var(--line);
+    text-transform:uppercase;padding:4px 10px;border:0;
     background:transparent;color:var(--muted);cursor:pointer;transition:background .15s,color .15s;
   }
+  .sortby button{border-right:1px solid var(--line);}
+  .collapse{border:1px solid var(--line);border-radius:3px;margin-left:12px;}
+  .collapse:hover{color:var(--paper);}
+  .collapse:focus-visible{outline:2px solid var(--page-accent);outline-offset:-2px;}
+  .sec.collapsed .sec-body{display:none;}
+  .sec.collapsed .sec-hd{border-bottom-color:transparent;margin-bottom:0;}
   .sortby button:last-child{border-right:0;}
   .sortby button:hover{color:var(--paper);}
   .sortby button:focus-visible{outline:2px solid var(--page-accent);outline-offset:-2px;}
@@ -248,12 +255,13 @@
     <div class="switch" id="switch" role="group" aria-label="Choose team"></div>
   </header>
 
-  <section class="sec">
+  <section class="sec" id="secPlans">
     <div class="sec-hd">
       <h2>Choose a plan</h2>
       <span class="note">Tap to highlight · tap again to clear</span>
+      <button class="collapse" type="button" data-sec="secPlans" aria-expanded="true">Hide</button>
     </div>
-    <div class="plans" id="plans"></div>
+    <div class="sec-body"><div class="plans" id="plans"></div></div>
   </section>
 
   <section class="sec">
@@ -265,12 +273,13 @@
     <div class="months" id="months"></div>
   </section>
 
-  <section class="sec">
+  <section class="sec" id="secValue">
     <div class="sec-hd">
       <h2>What each plan is worth</h2>
       <span class="note">Face value = sum of listed single-game prices</span>
+      <button class="collapse" type="button" data-sec="secValue" aria-expanded="true">Hide</button>
     </div>
-    <div class="tbl-scroll">
+    <div class="sec-body"><div class="tbl-scroll">
       <table id="valueTable">
         <thead>
           <tr>
@@ -280,21 +289,21 @@
         </thead>
         <tbody></tbody>
       </table>
-    </div>
+    </div></div>
   </section>
 
   <div class="footnotes">
     <p><b>The two 22-game plans split the season.</b> On both teams, Plan A and Plan B divide every dated home game between them with no overlap — 21 dates each on the Celtics side, 22 each on the Bruins side. The 10-game plans draw from both.</p>
-    <p><b>Row A vs Rows B.</b> Both pricing sheets list two tiers per game — Row A (front of the balcony) runs $10 more than every other row. Plan pricing is a single number, so which tier you actually get changes the discount a lot.</p>
-    <p><b>Bergeron Night.</b> Patrice Bergeron's No. 37 goes up before the Dec 1 Bruins game vs Colorado — the most expensive date on either sheet at $326.50. It appears in the 22-Game Bergeron package only. The sale email says the 22-Game Plan guarantees access to the ceremony, but the 22-Game Black Friday game list doesn't include Dec 1. Worth pinning down with the rep before you buy.</p>
+    <p><b>Row A vs Rows B.</b> Both pricing sheets list two tiers per game — Row A (front of the balcony) runs $10 more than every other row. Plan pricing is a single number covering either tier, so the same plan shows a different discount against each: across the eight plans that runs 0.8% to 12.3% against Row A face, and −7.4% to 4.5% against Rows B — the negative being the Bruins 10-Game Black Friday, which costs $90.00 more than its Rows B face value.</p>
+    <p><b>Bergeron Night.</b> Patrice Bergeron's No. 37 goes up before the Dec 1 Bruins game vs Colorado — the most expensive date on either sheet at $326.50. It appears in the 22-Game Bergeron package only. The sale email says the 22-Game Plan guarantees access to the ceremony; the 22-Game Black Friday game list does not include Dec 1. Those two statements are in conflict on this sheet.</p>
     <p><b>Celtics plan pricing is flat per plan size.</b> $2,376 buys either 22-game plan and $1,180 buys either 10-game plan, so the two plans at each size cost the same but hold different games — Plan B's slate is $30 richer at face value than Plan A's, and the 10-Game Black Friday's is $20 richer than the Rival's. At those prices every Celtics plan beats face value in both tiers, which is not true on the Bruins side.</p>
-    <p><b>The “up to 14%” claim.</b> The Celtics plan sheet advertises savings of up to 14% over single-game pricing. The best any plan does here is 12.3% — Plan B against Row A — and waived service fees can't be the difference, because the $6.50 fee is already inside every single-game price on this page, so the savings math already credits the waiver. Stripping fees out of both sides makes it worse, not better: 7.4%. Worth asking the rep what the 14% is measured against.</p>
-    <p><b>The pricing sheet has four wrong opponents.</b> On four Celtics dates the pricing calendar disagrees with the package sheets: Oct 14, Dec 2 and Jan 23 are printed as Brooklyn but are Charlotte, and Mar 16 is printed as the Lakers but is Sacramento. The package sheets are right, and the published NBA schedule confirms all four. The pricing calendar also convicts itself twice over — it lists five home games against Brooklyn, where a division rival is two, and it lists the Lakers twice, as both LAL and LAK. This page uses the package sheets' opponents; the prices are unaffected, since only the labels differ.</p>
+    <p><b>The “up to 14%” claim.</b> The Celtics plan sheet advertises savings of up to 14% over single-game pricing. The best any plan does here is 12.3% — Plan B against Row A — and waived service fees can't be the difference, because the $6.50 fee is already inside every single-game price on this page, so the savings math already credits the waiver. Stripping fees out of both sides gives 7.4%. No basis in these documents produces 14%.</p>
+    <p><b>The pricing sheet has four wrong opponents.</b> On four Celtics dates the pricing calendar disagrees with the package sheets: Oct 14, Dec 2 and Jan 23 are printed as Brooklyn but are Charlotte, and Mar 16 is printed as the Lakers but is Sacramento. The published NBA schedule matches the package sheets on all four. The pricing calendar is also internally inconsistent: it lists five home games against Brooklyn, where the format gives a division rival two, and it lists the Lakers twice, as both LAL and LAK. This page uses the package sheets' opponents; the prices are unaffected, since only the labels differ.</p>
     <p><b>NBA Cup.</b> Dec 4–11 is a single window on the Celtics sheet with eight potential home dates, flat $71.50 / $61.50 and no opponent or tip time. Both 22-game plans include exactly one Cup game in it — Plan A a semifinal, Plan B a quarterfinal — which is why each is 21 dated games plus one Cup slot. That slot is counted in the face-value totals at Cup price; selecting either plan lights the whole window, since the actual date isn't known yet. The eight rows are otherwise excluded from every total.</p>
     <p><b>Preseason.</b> Bruins Sep 20 vs Washington and Sep 22 vs Philadelphia are preseason at $61.50 — each 22-game plan spends one of its 22 slots on one. The Celtics plans do the same: Oct 10 vs Philadelphia (Plan B) and Oct 14 vs Charlotte (Plan A), both marked preseason on the package sheets and both $61.50.</p>
-    <p><b>Seven marquee games are held back, not sold out.</b> Sep 29, Nov 8, Nov 27, Dec 1 and Mar 6 for the Bruins, and Oct 23 and Jan 21 for the Celtics, are tagged <b>ON SALE LATER</b>: they were deliberately withheld from the general individual on-sale. The Bruins notice named the Black Friday game and Bergeron night and said those release in late August; the Celtics notice named Opening Night and Jan 21 and said mid-September. Both home openers and Bergeron night are on the list, and three of the seven sit in the 22-Game Bergeron package. As of Aug 24 none had appeared yet, so a plan is still the only committed route in.</p>
+    <p><b>Seven marquee games are held back, not sold out.</b> Sep 29, Nov 8, Nov 27, Dec 1 and Mar 6 for the Bruins, and Oct 23 and Jan 21 for the Celtics, are tagged <b>ON SALE LATER</b>: they were deliberately withheld from the general individual on-sale. The Bruins notice named the Black Friday game and Bergeron night and said those release in late August; the Celtics notice named Opening Night and Jan 21 and said mid-September. Both home openers and Bergeron night are on the list, and three of the seven fall in the 22-Game Bergeron package. As of Aug 24, 2026 none had appeared in the individual on-sale listing.</p>
     <p><b>Concerts and shows.</b> Every one of the 36 non-team events is priced here from its Rafters on-sale email. Those prices are all-in, and so are the game prices — every Rafters price on this page is a round face value plus a flat $6.50 per-ticket fee, confirmed against a checkout screen for Oct 31 that broke $126.50 into $120.00 face and $6.50 fees. Subtracting $6.50 lands all 30 distinct game prices and all 13 Rafters event prices on a round $5 face, which is why everything here ends in .50. Games and shows are therefore directly comparable, including in the by-price sort. Club Seat prices are the exception and don't follow the pattern. Prices run from $56.50 (Smashing Pumpkins, John Summit) to $206.50 for the three Olivia Rodrigo nights. None of the 36 collides with a game date.</p>
-    <p><b>Five nights the Rafters are closed.</b> KATSEYE on Oct 28, Comics Come Home on Nov 7, Il Volo on Nov 19 and both Professional Bull Riders dates on Jan 2–3 are tagged <b>RAFTERS CLOSED</b> — your seats aren't available for those events at all, and the listed price is the Club Seat alternative TD Garden offered instead.</p>
+    <p><b>Five nights the Rafters are closed.</b> KATSEYE on Oct 28, Comics Come Home on Nov 7, Il Volo on Nov 19 and both Professional Bull Riders dates on Jan 2–3 are tagged <b>RAFTERS CLOSED</b>. Rafters seats are not sold for those events; the listed price is the Club Seat rate offered in their place.</p>
     <p><b>Double headers.</b> Three dates put both teams in the building: Oct 10, Nov 27 and Dec 20. Dec 5 would be a fourth if the Celtics host an NBA Cup game that day. They're tagged <b>DH</b> whenever both teams are on screen.</p>
   </div>
 
@@ -554,6 +563,30 @@ const switchEl=document.getElementById("switch");
   switchEl.appendChild(b);
 });
 
+/* Collapsing a section is a per-viewer convenience, so it lives in localStorage,
+   which can throw outright in a private window or a preview frame. */
+const store={
+  get(k,d){ try{ const v=localStorage.getItem(k); return v===null?d:v; }catch(e){ return d; } },
+  set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+};
+document.querySelectorAll(".collapse").forEach(btn=>{
+  const sec=document.getElementById(btn.dataset.sec);
+  const key="rafters:"+btn.dataset.sec;
+  const apply=(hidden)=>{
+    sec.classList.toggle("collapsed", hidden);
+    btn.textContent = hidden ? "Show" : "Hide";
+    btn.setAttribute("aria-expanded", String(!hidden));
+    /* a hidden plan card can't be un-clicked, so don't leave the ribbon dimmed */
+    if(hidden && btn.dataset.sec==="secPlans" && active) select(null);
+  };
+  apply(store.get(key,"open")==="closed");
+  btn.addEventListener("click",()=>{
+    const hidden=!sec.classList.contains("collapsed");
+    store.set(key, hidden?"closed":"open");
+    apply(hidden);
+  });
+});
+
 const sortEl=document.getElementById("sortby");
 [["date","By date"],["price","By price"]].forEach(([k,label])=>{
   const b=document.createElement("button");
@@ -587,8 +620,9 @@ function renderPlans(){
       ? `<div class="pending"><b>Concerts and shows are sold ticket by ticket.</b> `+
         `No Rafters package covers them, so there's nothing to weigh against face `+
         `value — but each carries its Rafters price from the on-sale email. Those `+
-        `prices are all-in, fees included, unlike the game prices elsewhere on this `+
-        `page. Five dates show a Club Seat price because the Rafters are closed.</div>`
+        `prices are all-in — a round face value plus a flat $6.50 fee, the same `+
+        `basis as the game prices. Five dates show a Club Seat price because the `+
+        `Rafters are closed for them.</div>`
       : `<div class="pending"><b>No packages published for this team yet.</b></div>`;
     return;
   }
