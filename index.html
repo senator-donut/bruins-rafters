@@ -87,7 +87,17 @@
     font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;
     letter-spacing:.12em;font-size:19px;font-weight:600;margin:0;
   }
-  .sec-hd .note{color:var(--muted);font-size:12.5px;margin-left:auto;text-align:right;}
+  .sec-hd .note{color:var(--muted);font-size:12.5px;text-align:right;}
+  .sortby{display:flex;gap:0;margin-left:auto;border:1px solid var(--line);border-radius:3px;overflow:hidden;}
+  .sortby button{
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.1em;
+    text-transform:uppercase;padding:4px 10px;border:0;border-right:1px solid var(--line);
+    background:transparent;color:var(--muted);cursor:pointer;transition:background .15s,color .15s;
+  }
+  .sortby button:last-child{border-right:0;}
+  .sortby button:hover{color:var(--paper);}
+  .sortby button:focus-visible{outline:2px solid var(--page-accent);outline-offset:-2px;}
+  .sortby button[aria-pressed="true"]{background:var(--panel-2);color:var(--paper);}
 
   /* ---------- plan cards ---------- */
   .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:10px;}
@@ -156,6 +166,8 @@
   .game.tbd{opacity:.45;border-left-style:dashed;}
   .game.maybe{opacity:.8;border-left-color:var(--accent);border-left-style:dashed;background:var(--panel-2);}
   .game.maybe .g-opp{color:var(--accent);}
+  /* sorted by price the date carries its month, so the column needs more room */
+  .by-price .game{grid-template-columns:80px minmax(0,1fr) auto;}
   .g-date{
     font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);
     letter-spacing:-.01em;white-space:nowrap;
@@ -243,6 +255,7 @@
   <section class="sec">
     <div class="sec-hd">
       <h2>The season</h2>
+      <span class="sortby" id="sortby" role="group" aria-label="Sort the season"></span>
       <span class="note" id="ribbonNote"></span>
     </div>
     <div class="months" id="months"></div>
@@ -276,7 +289,7 @@
     <p><b>NBA Cup.</b> Dec 4–11 is a single window on the Celtics sheet with eight potential home dates, flat $71.50 / $61.50 and no opponent or tip time. Both 22-game plans include exactly one Cup game in it — Plan A a semifinal, Plan B a quarterfinal — which is why each is 21 dated games plus one Cup slot. That slot is counted in the face-value totals at Cup price; selecting either plan lights the whole window, since the actual date isn't known yet. The eight rows are otherwise excluded from every total.</p>
     <p><b>Preseason.</b> Bruins Sep 20 vs Washington and Sep 22 vs Philadelphia are preseason at $61.50 — each 22-game plan spends one of its 22 slots on one. The Celtics plans do the same: Oct 10 vs Philadelphia (Plan B) and Oct 14 vs Charlotte (Plan A), both marked preseason on the package sheets and both $61.50.</p>
     <p><b>Seven marquee games are held back, not sold out.</b> Sep 29, Nov 8, Nov 27, Dec 1 and Mar 6 for the Bruins, and Oct 23 and Jan 21 for the Celtics, are tagged <b>ON SALE LATER</b>: they were deliberately withheld from the general individual on-sale. The Bruins notice named the Black Friday game and Bergeron night and said those release in late August; the Celtics notice named Opening Night and Jan 21 and said mid-September. Both home openers and Bergeron night are on the list, and three of the seven sit in the 22-Game Bergeron package. As of Aug 24 none had appeared yet, so a plan is still the only committed route in.</p>
-    <p><b>Concerts and shows.</b> Every one of the 36 non-team events is priced here from its Rafters on-sale email. Those prices are all-in — fees included, shown upfront — which is not the same basis as the game prices above, so don't read the two columns as directly comparable. Prices run from $56.50 (Smashing Pumpkins, John Summit) to $206.50 for the three Olivia Rodrigo nights. None of the 36 collides with a game date.</p>
+    <p><b>Concerts and shows.</b> Every one of the 36 non-team events is priced here from its Rafters on-sale email. Those prices are all-in — fees included, shown upfront — which is not the same basis as the game prices above. That matters most when you sort by price: a concert and a game landing in the same band aren't strictly like for like, and the small label under each price says which basis it's on. Prices run from $56.50 (Smashing Pumpkins, John Summit) to $206.50 for the three Olivia Rodrigo nights. None of the 36 collides with a game date.</p>
     <p><b>Five nights the Rafters are closed.</b> KATSEYE on Oct 28, Comics Come Home on Nov 7, Il Volo on Nov 19 and both Professional Bull Riders dates on Jan 2–3 are tagged <b>RAFTERS CLOSED</b> — your seats aren't available for those events at all, and the listed price is the Club Seat alternative TD Garden offered instead.</p>
     <p><b>Double headers.</b> Three dates put both teams in the building: Oct 10, Nov 27 and Dec 20. Dec 5 would be a fourth if the Celtics host an NBA Cup game that day. They're tagged <b>DH</b> in the combined view.</p>
   </div>
@@ -488,7 +501,18 @@ G.filter(g=>!g.tbd).forEach(g=>{
 const money =n=>"$"+n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
 const money0=n=>"$"+Math.round(n).toLocaleString("en-US");
 
-let view="ALL", active=null;
+let view="ALL", active=null, sortBy="date";
+
+/* Price bands for the by-price sort. Chosen off the actual spread, which is
+   long-tailed: three dates clear $250 while a third of the season is under $85. */
+const BANDS=[
+  {lo:250, label:"$250 and up"},
+  {lo:200, label:"$200 \u2013 249"},
+  {lo:150, label:"$150 \u2013 199"},
+  {lo:110, label:"$110 \u2013 149"},
+  {lo:85,  label:"$85 \u2013 109"},
+  {lo:0,   label:"Under $85"}
+];
 
 const teamsInView = ()=> view==="ALL" ? ["BRU","CEL","EVT"] : [view];
 const gamesInView = ()=> G.filter(g=>teamsInView().includes(g.team));
@@ -515,6 +539,20 @@ const switchEl=document.getElementById("switch");
   b.innerHTML=`${label}<span class="sw-count">${n} ${noun}</span>`;
   b.addEventListener("click",()=>setView(k));
   switchEl.appendChild(b);
+});
+
+const sortEl=document.getElementById("sortby");
+[["date","By date"],["price","By price"]].forEach(([k,label])=>{
+  const b=document.createElement("button");
+  b.type="button"; b.dataset.sort=k; b.textContent=label;
+  b.setAttribute("aria-pressed", String(k===sortBy));
+  b.addEventListener("click",()=>{
+    sortBy=k;
+    sortEl.querySelectorAll("button").forEach(x=>
+      x.setAttribute("aria-pressed", String(x.dataset.sort===k)));
+    renderRibbon(); select(active);
+  });
+  sortEl.appendChild(b);
 });
 
 function setView(k){
@@ -566,41 +604,59 @@ function renderPlans(){
 
 /* ---------- schedule ribbon ---------- */
 const monthsEl=document.getElementById("months");
+
+function gameRow(g){
+  const el=document.createElement("div");
+  const evt=g.team==="EVT";
+  el.className="game "+TEAMS[g.team].cls+(g.tbd?" tbd":"")+(evt?" evt":"");
+  el.dataset.plans=g.plans.join(",");
+  el.dataset.team=g.team;
+  el.dataset.tbd=g.tbd?"1":"0";
+  /* sorted by date the month is the column heading; by price it has to ride along */
+  const when = sortBy==="price" ? `${g.day} ${g.date}` : `${g.day} ${g.date.split(" ")[1]}`;
+  el.innerHTML=
+    `<span class="g-date">${when}</span>`+
+    `<span class="g-meta"><span class="g-opp">${evt?g.name:(g.tbd?"NBA CUP":g.opp)}</span>`+
+      (view==="ALL"&&!evt?`<span class="tag team">${g.team}</span>`:``)+
+      (g.tbd?`<span class="tag cup">TBD</span>`:``)+
+      (g.pre?`<span class="tag pre">PRE</span>`:``)+
+      (g.nos?`<span class="tag nos" title="Held out of the general individual on-sale; released separately">ON SALE LATER</span>`:``)+
+      (evt&&g.club?`<span class="tag club" title="Rapid7 Rafters is closed for this event">RAFTERS CLOSED</span>`:``)+
+      (g.team==="BRU"&&g.opp==="COL"?`<span class="tag">37</span>`:``)+
+      (view==="ALL"&&DH.has(g.date)?`<span class="tag dh">DH</span>`:``)+
+      (g.time?`<span class="g-time">${g.time}</span>`:``)+
+    `</span>`+
+    (evt
+      ? `<span class="g-price">${money(g.a)}<small>${g.club?"club seat":"rafters"}</small></span>`
+      : `<span class="g-price">${money(g.a)}<small>${money(g.b)}</small></span>`);
+  return el;
+}
+
+function group(label, list){
+  const col=document.createElement("div");
+  col.innerHTML=`<div class="month-label">${label} <b>${list.length}</b></div>`;
+  const box=document.createElement("div"); box.className="games";
+  list.forEach(g=>box.appendChild(gameRow(g)));
+  col.appendChild(box); monthsEl.appendChild(col);
+}
+
 function renderRibbon(){
   monthsEl.innerHTML="";
+  monthsEl.classList.toggle("by-price", sortBy==="price");
   const vis=gamesInView();
-  MONTH_ORDER.forEach(m=>{
-    const list=vis.filter(g=>g.date.startsWith(m+" "));
-    if(!list.length) return;
-    const col=document.createElement("div");
-    col.innerHTML=`<div class="month-label">${MONTH_FULL[m]} <b>${list.length}</b></div>`;
-    const box=document.createElement("div"); box.className="games";
-    list.forEach(g=>{
-      const el=document.createElement("div");
-      const evt=g.team==="EVT";
-      el.className="game "+TEAMS[g.team].cls+(g.tbd?" tbd":"")+(evt?" evt":"");
-      el.dataset.plans=g.plans.join(",");
-      el.dataset.team=g.team;
-      el.dataset.tbd=g.tbd?"1":"0";
-      el.innerHTML=
-        `<span class="g-date">${g.day} ${g.date.split(" ")[1]}</span>`+
-        `<span class="g-meta"><span class="g-opp">${evt?g.name:(g.tbd?"NBA CUP":g.opp)}</span>`+
-          (view==="ALL"&&!evt?`<span class="tag team">${g.team}</span>`:``)+
-          (g.tbd?`<span class="tag cup">TBD</span>`:``)+
-          (g.pre?`<span class="tag pre">PRE</span>`:``)+
-          (g.nos?`<span class="tag nos" title="Held out of the general individual on-sale; released separately">ON SALE LATER</span>`:``)+
-          (evt&&g.club?`<span class="tag club" title="Rapid7 Rafters is closed for this event">RAFTERS CLOSED</span>`:``)+
-          (g.team==="BRU"&&g.opp==="COL"?`<span class="tag">37</span>`:``)+
-          (view==="ALL"&&DH.has(g.date)?`<span class="tag dh">DH</span>`:``)+
-          (g.time?`<span class="g-time">${g.time}</span>`:``)+
-        `</span>`+
-        (evt
-          ? `<span class="g-price">${money(g.a)}<small>${g.club?"club seat":"rafters"}</small></span>`
-          : `<span class="g-price">${money(g.a)}<small>${money(g.b)}</small></span>`);
-      box.appendChild(el);
+  if(sortBy==="date"){
+    MONTH_ORDER.forEach(m=>{
+      const list=vis.filter(g=>g.date.startsWith(m+" "));
+      if(list.length) group(MONTH_FULL[m], list);
     });
-    col.appendChild(box); monthsEl.appendChild(col);
-  });
+  } else {
+    const ranked=[...vis].sort((x,y)=> y.a-x.a || x.key-y.key);
+    BANDS.forEach((b,i)=>{
+      const hi = i ? BANDS[i-1].lo : Infinity;
+      const list=ranked.filter(g=>g.a>=b.lo && g.a<hi);
+      if(list.length) group(b.label, list);
+    });
+  }
 }
 
 /* ---------- value table ---------- */
